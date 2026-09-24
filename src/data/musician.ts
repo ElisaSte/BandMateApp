@@ -1,3 +1,4 @@
+import { ImageSourcePropType } from "react-native";
 import { Genre } from "./genre";
 import { Instrument } from "./instrument";
 
@@ -11,5 +12,5 @@ export interface Musician {
   city: string;
   yearsOfExperience: number;
   genres: Genre[];
-  profilePic: string;
+  profilePic: ImageSourcePropType;
 }

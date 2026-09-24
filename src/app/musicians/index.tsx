@@ -5,11 +5,12 @@ import { musicians } from "../../data/musicians";
 export default function Musicians() {
   return (
     <View style={styles.root}>
-      <Text>Our new musicians:</Text>
+      <Text style={styles.text}>Our new musicians:</Text>
       <FlatList
+        style={styles.list}
         data={musicians
           .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
-          .slice(0, 20)}
+          .slice(0, 8)}
         keyExtractor={(m) => m.id.toString()}
         renderItem={({ item }) => <MusicianCard musician={item} />}
       />
@@ -19,21 +20,15 @@ export default function Musicians() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 12,
     backgroundColor: "#362323",
   },
-  logo: {
-    width: "90%",
-    height: 200,
-  },
-  description: {
-    textAlign: "center",
+  text: {
     fontSize: 30,
     color: "#a39b9b",
+    padding: 20,
+    marginTop: 40,
     fontFamily: "MetalMania",
-    marginTop: 30,
   },
   button: {
     backgroundColor: "#a39b9b",
@@ -46,5 +41,9 @@ const styles = StyleSheet.create({
     color: "#362323",
     fontSize: 18,
     fontFamily: "MetalMania",
+  },
+  list: {
+    width: "100%",
+    flex: 1,
   },
 });
