@@ -1,4 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
 
 export default function Musicians() {
@@ -10,7 +11,7 @@ export default function Musicians() {
           .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
           .slice(0, 20)}
         keyExtractor={(m) => m.id.toString()}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) => <MusicianCard musician={item} />}
       />
     </View>
   );

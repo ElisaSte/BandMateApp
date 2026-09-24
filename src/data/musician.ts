@@ -11,4 +11,5 @@ export interface Musician {
   city: string;
   yearsOfExperience: number;
   genres: Genre[];
+  profilePic: string;
 }
