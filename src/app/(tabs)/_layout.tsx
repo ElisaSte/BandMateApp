@@ -16,9 +16,9 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="find-musicians"
         options={{
-          title: "Explore",
+          title: "Musicians",
         }}
       />
       <Tabs.Screen

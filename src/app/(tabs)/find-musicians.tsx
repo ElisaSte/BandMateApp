@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
 
-export default function Musicians() {
+export default function FindMusicians() {
   return (
     <View style={styles.root}>
       <Text style={styles.text}>Our new musicians:</Text>

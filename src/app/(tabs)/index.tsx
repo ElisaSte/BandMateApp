@@ -27,7 +27,7 @@ export default function Index() {
       <FlatList
         style={styles.list}
         ListHeaderComponent={
-          <>
+          <View style={styles.header}>
             <Image
               style={styles.logo}
               source={require("../../../assets/bm/BandMatelogo.png")}
@@ -43,12 +43,12 @@ export default function Index() {
             </Text>
             <Pressable
               style={styles.button}
-              onPress={() => router.push("/explore")}
+              onPress={() => router.push("/find-musicians")}
             >
               <Text style={styles.buttonText}> Find musicians</Text>
             </Pressable>
             <Text style={styles.text}>Our new musicians:</Text>
-          </>
+          </View>
         }
         data={musicians
           .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
@@ -65,6 +65,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#362323",
   },
+  header: {
+    alignItems: "center",
+  },
   logo: {
     width: "90%",
     height: 200,
@@ -78,10 +81,10 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#a39b9b",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
     borderRadius: 8,
-    marginTop: 60,
+    marginTop: 30,
   },
   buttonText: {
     color: "#362323",
