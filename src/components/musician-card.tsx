@@ -10,7 +10,14 @@ export default function MusicianCard(musicianProp: MusicianCardProps) {
   return (
     <Pressable
       style={styles.card}
-      onPress={() => router.push(`/musicians/${musicianProp.musician.id}`)}
+      onPress={() =>
+        router.push({
+          pathname: "/musicians/[id]",
+          params: {
+            id: musicianProp.musician.id.toString(),
+          },
+        })
+      }
     >
       <Image
         source={musicianProp.musician.profilePic}
