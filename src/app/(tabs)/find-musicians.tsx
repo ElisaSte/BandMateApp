@@ -1,14 +1,36 @@
 import { InstrumentType } from "@/data/instrument";
 import { Musician } from "@/data/musician";
 import { Picker } from "@react-native-picker/picker";
+import * as Location from "expo-location";
 import { useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
 
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
   const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
+
+  const getLocation = async () => {
+    //ask phone to use position
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      return;
+    }
+
+    //if user accept, get location
+    const location = await Location.getCurrentPositionAsync({});
+
+    console.log(location.coords);
+  };
 
   const filteredMusicians: Musician[] = musicians.filter((m) => {
     if (!m.name.toLowerCase().includes(search.toLowerCase())) {
@@ -49,6 +71,9 @@ export default function FindMusicians() {
           <Picker.Item label="Keyboard" value="Keyboard" />
         </Picker>
       </View>
+      <Pressable onPress={getLocation} style={styles.locationButton}>
+        <Text style={styles.locationButtonText}>Find my location</Text>
+      </Pressable>
       <Text style={styles.text}>Our musicians</Text>
       {filteredMusicians.length === 0 && (
         <Text style={styles.noResults}>Oops! No musicians found.</Text>
@@ -117,5 +142,20 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     textAlign: "center",
     marginTop: 30,
+  },
+  locationButton: {
+    backgroundColor: "#a39b9b",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+    width: "100%",
+    marginTop: 5,
+  },
+
+  locationButtonText: {
+    color: "#362323",
+    fontFamily: "MetalMania",
+    fontSize: 18,
+    textAlign: "center",
   },
 });
