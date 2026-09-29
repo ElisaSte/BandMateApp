@@ -10,6 +10,8 @@ export interface Musician {
   registrationDate: string;
   bio: string;
   city: string;
+  latitude: number;
+  longitude: number;
   yearsOfExperience: number;
   genres: Genre[];
   profilePic: ImageSourcePropType;

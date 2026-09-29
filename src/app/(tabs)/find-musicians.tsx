@@ -75,7 +75,7 @@ export default function FindMusicians() {
         </Picker>
       </View>
       <Pressable onPress={getLocation} style={styles.locationButton}>
-        <Text style={styles.locationButtonText}>Find my location</Text>
+        <Text style={styles.locationButtonText}>Near me</Text>
       </Pressable>
       {location && (
         <Text style={styles.locationText}>
