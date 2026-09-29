@@ -17,6 +17,9 @@ import { musicians } from "../../data/musicians";
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
   const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null,
+  );
 
   const getLocation = async () => {
     //ask phone to use position
@@ -27,9 +30,9 @@ export default function FindMusicians() {
     }
 
     //if user accept, get location
-    const location = await Location.getCurrentPositionAsync({});
+    const currentLocation = await Location.getCurrentPositionAsync({});
 
-    console.log(location.coords);
+    setLocation(currentLocation);
   };
 
   const filteredMusicians: Musician[] = musicians.filter((m) => {
@@ -74,6 +77,11 @@ export default function FindMusicians() {
       <Pressable onPress={getLocation} style={styles.locationButton}>
         <Text style={styles.locationButtonText}>Find my location</Text>
       </Pressable>
+      {location && (
+        <Text style={styles.locationText}>
+          📍 {location.coords.latitude}, {location.coords.longitude}
+        </Text>
+      )}
       <Text style={styles.text}>Our musicians</Text>
       {filteredMusicians.length === 0 && (
         <Text style={styles.noResults}>Oops! No musicians found.</Text>
@@ -157,5 +165,11 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     fontSize: 18,
     textAlign: "center",
+  },
+  locationText: {
+    color: "#a39b9b",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
