@@ -1,4 +1,5 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import type { Musician } from "../data/musician";
 
 interface MusicianCardProps {
@@ -7,7 +8,10 @@ interface MusicianCardProps {
 
 export default function MusicianCard(musicianProp: MusicianCardProps) {
   return (
-    <View style={styles.card}>
+    <Pressable
+      style={styles.card}
+      onPress={() => router.push(`/musicians/${musicianProp.musician.id}`)}
+    >
       <Image
         source={musicianProp.musician.profilePic}
         style={styles.profilePic}
@@ -22,7 +26,7 @@ export default function MusicianCard(musicianProp: MusicianCardProps) {
         </Text>
         <Text>{musicianProp.musician.genres.join(", ")}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
