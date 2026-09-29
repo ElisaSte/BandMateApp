@@ -17,7 +17,7 @@ export default function Index() {
     <View style={styles.root}>
       <Image
         style={styles.logo}
-        source={require("../../assets/bm/BandMatelogo.png")}
+        source={require("../../../assets/bm/BandMatelogo.png")}
         resizeMode="contain"
       />
       <Text style={styles.description}>
@@ -27,11 +27,8 @@ export default function Index() {
         {"\n"}
         🎸🎶
       </Text>
-      <Pressable
-        style={styles.button}
-        onPress={() => router.push("/musicians")}
-      >
-        <Text style={styles.buttonText}> Find musicians</Text>
+      <Pressable style={styles.button} onPress={() => router.push("/explore")}>
+        <Text style={styles.buttonText}> Explore</Text>
       </Pressable>
     </View>
   );
