@@ -1,4 +1,6 @@
+import { InstrumentType } from "@/data/instrument";
 import { Musician } from "@/data/musician";
+import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import MusicianCard from "../../components/musician-card";
@@ -6,10 +8,24 @@ import { musicians } from "../../data/musicians";
 
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
+  const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
 
-  const musiciansByName: Musician[] = musicians.filter((m) =>
-    m.name.toLowerCase().includes(search.toLocaleLowerCase()),
-  );
+  const filteredMusicians: Musician[] = musicians.filter((m) => {
+    if (!m.name.toLowerCase().includes(search.toLowerCase())) {
+      //excludes musicians who´s name doesn´t include the search
+      return false;
+    }
+
+    if (
+      instrument !== "All" &&
+      !m.instruments.some((i) => i.name === instrument)
+    ) {
+      //excludes musician that doesn't have the selected instrument in the instrument list
+      return false;
+    }
+
+    return true;
+  });
 
   return (
     <View style={styles.root}>
@@ -20,10 +36,27 @@ export default function FindMusicians() {
         value={search}
         onChangeText={setSearch}
       />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={instrument}
+          onValueChange={(value) => setInstrument(value)}
+        >
+          <Picker.Item label="All instruments" value="All" />
+          <Picker.Item label="Guitar" value="Guitar" />
+          <Picker.Item label="Bass" value="Bass" />
+          <Picker.Item label="Drums" value="Drums" />
+          <Picker.Item label="Vocals" value="Vocals" />
+          <Picker.Item label="Keyboard" value="Keyboard" />
+        </Picker>
+      </View>
       <Text style={styles.text}>Our musicians</Text>
+      {filteredMusicians.length === 0 && (
+        <Text style={styles.noResults}>Oops! No musicians found.</Text>
+      )}
+
       <FlatList
         style={styles.list}
-        data={musiciansByName.sort((a, b) =>
+        data={filteredMusicians.sort((a, b) =>
           b.registrationDate.localeCompare(a.registrationDate),
         )}
         keyExtractor={(m) => m.id.toString()}
@@ -64,8 +97,25 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor: "#a39b9b",
     color: "#362323",
-    padding: 12,
     borderRadius: 8,
     fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginBottom: 10,
+    width: "100%",
+  },
+  pickerContainer: {
+    backgroundColor: "#a39b9b",
+    borderRadius: 8,
+    marginBottom: 10,
+    overflow: "hidden",
+    width: "100%",
+  },
+  noResults: {
+    color: "#a39b9b",
+    fontSize: 20,
+    fontFamily: "MetalMania",
+    textAlign: "center",
+    marginTop: 30,
   },
 });
