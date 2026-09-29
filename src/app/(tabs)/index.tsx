@@ -1,9 +1,18 @@
+import MusicianCard from "@/components/musician-card";
+import { musicians } from "@/data/musicians";
 import {
   MetalMania_400Regular,
   useFonts,
 } from "@expo-google-fonts/metal-mania";
 import { router } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function Index() {
   const [fontsLoaded] = useFonts({
@@ -15,21 +24,38 @@ export default function Index() {
   }
   return (
     <View style={styles.root}>
-      <Image
-        style={styles.logo}
-        source={require("../../../assets/bm/BandMatelogo.png")}
-        resizeMode="contain"
+      <FlatList
+        style={styles.list}
+        ListHeaderComponent={
+          <>
+            <Image
+              style={styles.logo}
+              source={require("../../../assets/bm/BandMatelogo.png")}
+              resizeMode="contain"
+            />
+
+            <Text style={styles.description}>
+              Find the perfect musicians for your band,
+              {"\n"} connect with fellow artists,
+              {"\n"}and turn your musical ideas
+              {"\n"}into something real.
+              {"\n"}🎸🎶
+            </Text>
+            <Pressable
+              style={styles.button}
+              onPress={() => router.push("/explore")}
+            >
+              <Text style={styles.buttonText}> Find musicians</Text>
+            </Pressable>
+            <Text style={styles.text}>Our new musicians:</Text>
+          </>
+        }
+        data={musicians
+          .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
+          .slice(0, 8)}
+        keyExtractor={(m) => m.id.toString()}
+        renderItem={({ item }) => <MusicianCard musician={item} />}
       />
-      <Text style={styles.description}>
-        Find the perfect musicians for your band,
-        {"\n"} connect with fellow artists, {"\n"}and turn your musical ideas{" "}
-        {"\n"}into {"\n"}something real.
-        {"\n"}
-        🎸🎶
-      </Text>
-      <Pressable style={styles.button} onPress={() => router.push("/explore")}>
-        <Text style={styles.buttonText}> Explore</Text>
-      </Pressable>
     </View>
   );
 }
@@ -37,9 +63,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
     backgroundColor: "#362323",
   },
   logo: {
@@ -64,5 +87,15 @@ const styles = StyleSheet.create({
     color: "#362323",
     fontSize: 18,
     fontFamily: "MetalMania",
+  },
+  text: {
+    fontSize: 30,
+    color: "#a39b9b",
+    padding: 20,
+    marginTop: 40,
+    fontFamily: "MetalMania",
+  },
+  list: {
+    width: "100%",
   },
 });
