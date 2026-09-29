@@ -47,7 +47,9 @@ export default function Index() {
             >
               <Text style={styles.buttonText}> Find musicians</Text>
             </Pressable>
-            <Text style={styles.text}>Our new musicians:</Text>
+            <Text style={styles.welcome}>
+              A warm welcome to our new musicians!
+            </Text>
           </View>
         }
         data={musicians
@@ -97,6 +99,14 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 40,
     fontFamily: "MetalMania",
+  },
+  welcome: {
+    fontSize: 20,
+    color: "#a39b9b",
+    padding: 20,
+    marginTop: 40,
+    fontFamily: "MetalMania",
+    textAlign: "center",
   },
   list: {
     width: "100%",

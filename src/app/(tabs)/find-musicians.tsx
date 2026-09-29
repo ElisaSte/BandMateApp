@@ -1,16 +1,31 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Musician } from "@/data/musician";
+import { useState } from "react";
+import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
 
 export default function FindMusicians() {
+  const [search, setSearch] = useState("");
+
+  const musiciansByName: Musician[] = musicians.filter((m) =>
+    m.name.toLowerCase().includes(search.toLocaleLowerCase()),
+  );
+
   return (
     <View style={styles.root}>
-      <Text style={styles.text}>Our new musicians:</Text>
+      <Text style={styles.text}>Filter</Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search by name"
+        value={search}
+        onChangeText={setSearch}
+      />
+      <Text style={styles.text}>Our musicians</Text>
       <FlatList
         style={styles.list}
-        data={musicians
-          .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
-          .slice(0, 8)}
+        data={musiciansByName.sort((a, b) =>
+          b.registrationDate.localeCompare(a.registrationDate),
+        )}
         keyExtractor={(m) => m.id.toString()}
         renderItem={({ item }) => <MusicianCard musician={item} />}
       />
@@ -45,5 +60,12 @@ const styles = StyleSheet.create({
   list: {
     width: "100%",
     flex: 1,
+  },
+  searchInput: {
+    backgroundColor: "#a39b9b",
+    color: "#362323",
+    padding: 12,
+    borderRadius: 8,
+    fontSize: 16,
   },
 });
