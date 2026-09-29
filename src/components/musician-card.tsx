@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import type { Musician } from "../data/musician";
@@ -10,14 +11,15 @@ export default function MusicianCard(musicianProp: MusicianCardProps) {
   return (
     <Pressable
       style={styles.card}
-      onPress={() =>
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         router.push({
           pathname: "/musicians/[id]",
           params: {
             id: musicianProp.musician.id.toString(),
           },
-        })
-      }
+        });
+      }}
     >
       <Image
         source={musicianProp.musician.profilePic}
