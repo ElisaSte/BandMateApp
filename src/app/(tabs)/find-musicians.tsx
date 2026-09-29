@@ -1,11 +1,12 @@
 import { InstrumentType } from "@/data/instrument";
 import { Musician } from "@/data/musician";
+import { calculateDistance } from "@/utils/distance";
 import { Picker } from "@react-native-picker/picker";
 import * as Location from "expo-location";
 import { useState } from "react";
 import {
-  FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -20,6 +21,7 @@ export default function FindMusicians() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
+  const [radius, setRadius] = useState<number | null>(10);
 
   const getLocation = async () => {
     //ask phone to use position
@@ -31,7 +33,7 @@ export default function FindMusicians() {
 
     //if user accept, get location
     const currentLocation = await Location.getCurrentPositionAsync({});
-
+    console.log("LOCATION:", currentLocation);
     setLocation(currentLocation);
   };
 
@@ -48,53 +50,82 @@ export default function FindMusicians() {
       //excludes musician that doesn't have the selected instrument in the instrument list
       return false;
     }
+    if (location && radius !== null) {
+      const distance = calculateDistance(
+        location.coords.latitude,
+        location.coords.longitude,
+        m.latitude,
+        m.longitude,
+      );
+
+      if (distance > radius) {
+        return false;
+      }
+    }
 
     return true;
   });
 
   return (
     <View style={styles.root}>
-      <Text style={styles.text}>Filter</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search by name"
-        value={search}
-        onChangeText={setSearch}
-      />
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={instrument}
-          onValueChange={(value) => setInstrument(value)}
-        >
-          <Picker.Item label="All instruments" value="All" />
-          <Picker.Item label="Guitar" value="Guitar" />
-          <Picker.Item label="Bass" value="Bass" />
-          <Picker.Item label="Drums" value="Drums" />
-          <Picker.Item label="Vocals" value="Vocals" />
-          <Picker.Item label="Keyboard" value="Keyboard" />
-        </Picker>
-      </View>
-      <Pressable onPress={getLocation} style={styles.locationButton}>
-        <Text style={styles.locationButtonText}>Near me</Text>
-      </Pressable>
-      {location && (
-        <Text style={styles.locationText}>
-          📍 {location.coords.latitude}, {location.coords.longitude}
-        </Text>
-      )}
-      <Text style={styles.text}>Our musicians</Text>
-      {filteredMusicians.length === 0 && (
-        <Text style={styles.noResults}>Oops! No musicians found.</Text>
-      )}
-
-      <FlatList
-        style={styles.list}
-        data={filteredMusicians.sort((a, b) =>
-          b.registrationDate.localeCompare(a.registrationDate),
+      <ScrollView>
+        <Text style={styles.text}>Filter</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by name"
+          value={search}
+          onChangeText={setSearch}
+        />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={instrument}
+            onValueChange={(value) => setInstrument(value)}
+          >
+            <Picker.Item label="All instruments" value="All" />
+            <Picker.Item label="Guitar" value="Guitar" />
+            <Picker.Item label="Bass" value="Bass" />
+            <Picker.Item label="Drums" value="Drums" />
+            <Picker.Item label="Vocals" value="Vocals" />
+            <Picker.Item label="Keyboard" value="Keyboard" />
+          </Picker>
+        </View>
+        <Pressable onPress={getLocation} style={styles.locationButton}>
+          <Text style={styles.locationButtonText}>Near me</Text>
+        </Pressable>
+        {location && (
+          <View style={styles.pickerContainer}>
+            <Text style={styles.radiusText}>Search radius</Text>
+            <Picker
+              selectedValue={radius}
+              onValueChange={(value) => setRadius(value)}
+            >
+              <Picker.Item label="5 km" value={5} />
+              <Picker.Item label="10 km" value={10} />
+              <Picker.Item label="15 km" value={15} />
+              <Picker.Item label="20 km" value={20} />
+              <Picker.Item label="25 km" value={25} />
+              <Picker.Item label="30 km" value={30} />
+              <Picker.Item label="35 km" value={35} />
+              <Picker.Item label="40 km" value={40} />
+              <Picker.Item label="45 km" value={45} />
+              <Picker.Item label="50 km" value={50} />
+              <Picker.Item label="100 km" value={100} />
+              <Picker.Item label="remove filter" value={null} />
+            </Picker>
+          </View>
         )}
-        keyExtractor={(m) => m.id.toString()}
-        renderItem={({ item }) => <MusicianCard musician={item} />}
-      />
+
+        <Text style={styles.text}>Our musicians</Text>
+        {filteredMusicians.length === 0 && (
+          <Text style={styles.noResults}>Oops! No musicians found.</Text>
+        )}
+
+        {filteredMusicians
+          .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
+          .map((musician) => (
+            <MusicianCard key={musician.id} musician={musician} />
+          ))}
+      </ScrollView>
     </View>
   );
 }
@@ -159,7 +190,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 5,
   },
-
   locationButtonText: {
     color: "#362323",
     fontFamily: "MetalMania",
@@ -171,5 +201,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginBottom: 10,
+  },
+  radiusText: {
+    color: "#a39b9b",
+    fontSize: 18,
+    fontFamily: "MetalMania",
+    marginBottom: 6,
+    marginTop: 5,
   },
 });
