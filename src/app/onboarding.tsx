@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     textAlign: "center",
     marginBottom: 35,
+    fontFamily: "MetalMania",
   },
   button: {
     backgroundColor: "#a39b9b",
