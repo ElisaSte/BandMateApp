@@ -14,5 +14,5 @@ export interface Musician {
   longitude: number;
   yearsOfExperience: number;
   genres: Genre[];
-  profilePic: ImageSourcePropType | string;
+  profilePic?: ImageSourcePropType | string;
 }

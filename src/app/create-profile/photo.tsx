@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -14,6 +15,18 @@ export default function ProfilePhoto() {
     });
 
     //if user close gallery and doesn't choose a pic
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
@@ -37,11 +50,14 @@ export default function ProfilePhoto() {
         <Text style={styles.buttonText}>Choose from gallery</Text>
       </Pressable>
 
-      <Pressable style={styles.button}>
+      <Pressable style={styles.button} onPress={takePhoto}>
         <Text style={styles.buttonText}>Take a photo</Text>
       </Pressable>
 
-      <Pressable style={styles.skipButton}>
+      <Pressable
+        style={styles.skipButton}
+        onPress={() => router.push("/(tabs)")}
+      >
         <Text style={styles.skipText}>Skip</Text>
       </Pressable>
     </View>
