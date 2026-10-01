@@ -35,7 +35,7 @@ export default function Onboarding() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push("/create-profile")}
+        onPress={() => router.push("../create-profile")}
       >
         <Text style={styles.buttonText}>Create your profile</Text>
       </Pressable>
