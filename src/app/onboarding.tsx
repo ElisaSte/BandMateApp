@@ -1,7 +1,23 @@
+import {
+  MetalMania_400Regular,
+  useFonts,
+} from "@expo-google-fonts/metal-mania";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Onboarding() {
+  const [fontsLoaded] = useFonts({
+    MetalMania: MetalMania_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+  const completeOnboarding = async () => {
+    await AsyncStorage.setItem("onboardingCompleted", "true");
+    router.replace("/find-musicians");
+  };
   return (
     <View style={styles.container}>
       <Image
@@ -19,16 +35,9 @@ export default function Onboarding() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push("/(tabs)/profile")}
+        onPress={() => router.push("/create-profile")}
       >
         <Text style={styles.buttonText}>Create your profile</Text>
-      </Pressable>
-
-      <Pressable
-        style={styles.secondaryButton}
-        onPress={() => router.replace("/(tabs)")}
-      >
-        <Text style={styles.secondaryButtonText}>Explore musicians</Text>
       </Pressable>
     </View>
   );

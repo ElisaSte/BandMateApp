@@ -1,8 +1,32 @@
-import { Stack } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, router } from "expo-router";
+import { useEffect, useState } from "react";
 
 export default function RootLayout() {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const completed = await AsyncStorage.getItem("onboardingCompleted");
+      if (completed === "true") {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/onboarding");
+      }
+      setLoading(false);
+    };
+    checkOnboarding();
+  }, []);
+  if (loading) {
+    return null;
+  }
   return (
     <Stack>
+      <Stack.Screen
+        name="onboarding"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="(tabs)"
         options={{
