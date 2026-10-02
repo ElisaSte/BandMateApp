@@ -3,7 +3,6 @@ import { Musician } from "@/data/musician";
 import { calculateDistance } from "@/utils/distance";
 import { Picker } from "@react-native-picker/picker";
 import * as Location from "expo-location";
-import { useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -14,6 +13,8 @@ import {
 } from "react-native";
 import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
