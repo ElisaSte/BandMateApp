@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
 import type { Genre } from "@/data/genre";
 import type { InstrumentType } from "@/data/instrument";
+import { createContext, useContext, useState } from "react";
 
 interface ProfileData {
   name: string;
@@ -11,6 +11,8 @@ interface ProfileData {
   yearsOfExperience: number;
   bio: string;
   profilePic?: string;
+  latitude: number;
+  longitude: number;
 }
 
 interface ProfileContextType {
@@ -29,6 +31,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     genres: [],
     yearsOfExperience: 0,
     bio: "",
+    latitude: 0,
+    longitude: 0,
   });
 
   return (

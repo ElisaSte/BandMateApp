@@ -1,10 +1,60 @@
 import { useProfile } from "@/context/profile-context";
+import * as Location from "expo-location";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
+  const [cityError, setCityError] = useState("");
 
+  const handleContinue = async () => {
+    const city = profile.city.trim();
+
+    if (!city) {
+      setCityError("Please enter a city");
+      return;
+    }
+
+    if (Platform.OS === "android") {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        setCityError("Location permission is required");
+        return;
+      }
+    }
+
+    try {
+      const results = await Location.geocodeAsync(city);
+
+      if (results.length === 0) {
+        setCityError("City not found");
+        return;
+      }
+
+      const { latitude, longitude } = results[0];
+
+      setProfile((current) => ({
+        ...current,
+        latitude,
+        longitude,
+      }));
+
+      setCityError("");
+
+      router.push("/create-profile/music");
+    } catch {
+      setCityError("Could not verify city");
+    }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create your profile</Text>
@@ -54,11 +104,9 @@ export default function CreateProfile() {
           }))
         }
       />
+      {cityError && <Text style={styles.error}>{cityError}</Text>}
 
-      <Pressable
-        style={styles.button}
-        onPress={() => router.push("/create-profile/music")}
-      >
+      <Pressable style={styles.button} onPress={handleContinue}>
         <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
     </View>
@@ -110,5 +158,10 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     fontSize: 20,
     textAlign: "center",
+  },
+  error: {
+    color: "#a39b9b",
+    marginTop: -15,
+    marginBottom: 15,
   },
 });
