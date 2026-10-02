@@ -2,11 +2,19 @@ import { useProfile } from "@/context/profile-context";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
   const [cityError, setCityError] = useState("");
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   const handleContinue = async () => {
     const city = profile.city.trim();
@@ -41,10 +49,13 @@ export default function CreateProfile() {
     }
   };
   const useCurrentLocation = async () => {
+    setLoadingLocation(true);
+    setCityError("");
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== "granted") {
       setCityError("Location permission is required");
+      setLoadingLocation(false);
       return;
     }
 
@@ -55,17 +66,19 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      console.log("Location:", location.coords);
-      console.log("Geocode result:", results);
+      //console.log("Location:", location.coords);
+      //console.log("Geocode result:", results);
 
       if (results.length === 0) {
         setCityError("Could not determine your city");
+        setLoadingLocation(false);
         return;
       }
 
       const city = results[0].city ?? results[0].district;
       if (!city) {
         setCityError("Could not determine your city");
+        setLoadingLocation(false);
         return;
       }
 
@@ -75,10 +88,12 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       }));
+      setLoadingLocation(false);
 
       setCityError("");
     } catch {
       setCityError("Could not get your location");
+      setLoadingLocation(false);
     }
   };
   return (
@@ -138,8 +153,21 @@ export default function CreateProfile() {
         </Text>
       )}
       {cityError && <Text style={styles.error}>{cityError}</Text>}
-      <Pressable style={styles.locationButton} onPress={useCurrentLocation}>
-        <Text style={styles.locationButtonText}>Use my location</Text>
+      <Pressable
+        style={styles.locationButton}
+        onPress={useCurrentLocation}
+        disabled={loadingLocation}
+      >
+        {loadingLocation ? (
+          <View style={styles.loadingContent}>
+            <ActivityIndicator color="#a39b9b" />
+            <Text style={styles.locationButtonText}>
+              Finding your location...
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.locationButtonText}>Use my location</Text>
+        )}
       </Pressable>
       <Pressable style={styles.button} onPress={handleContinue}>
         <Text style={styles.buttonText}>Continue</Text>
@@ -220,5 +248,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     textAlign: "center",
+  },
+  loadingContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
 });
