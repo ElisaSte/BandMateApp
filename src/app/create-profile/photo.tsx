@@ -1,11 +1,12 @@
+import { useProfile } from "@/context/profile-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function ProfilePhoto() {
-  const [image, setImage] = useState<string | null>(null);
+  const { profile, setProfile } = useProfile();
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -16,7 +17,10 @@ export default function ProfilePhoto() {
 
     //if user close gallery and doesn't choose a pic
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setProfile((current) => ({
+        ...current,
+        profilePic: result.assets[0].uri,
+      }));
     }
   };
 
@@ -28,7 +32,10 @@ export default function ProfilePhoto() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setProfile((current) => ({
+        ...current,
+        profilePic: result.assets[0].uri,
+      }));
     }
   };
   return (
@@ -39,8 +46,11 @@ export default function ProfilePhoto() {
         Last step! Add a profile picture so other musicians can recognize you.
       </Text>
       <View style={styles.profileImageContainer}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.profileImage} />
+        {profile.profilePic ? (
+          <Image
+            source={{ uri: profile.profilePic }}
+            style={styles.profileImage}
+          />
         ) : (
           <MaterialCommunityIcons name="account" size={70} color="#362323" />
         )}

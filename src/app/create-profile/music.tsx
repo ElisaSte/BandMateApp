@@ -1,10 +1,12 @@
+import { useProfile } from "@/context/profile-context";
 import { Genre } from "@/data/genre";
 import type { InstrumentType } from "@/data/instrument";
 import { router } from "expo-router";
-import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function MusicProfile() {
+  const { profile, setProfile } = useProfile();
+
   const instruments: InstrumentType[] = [
     "Guitar",
     "Bass",
@@ -12,16 +14,18 @@ export default function MusicProfile() {
     "Vocals",
     "Keyboard",
   ];
-  const [selectedInstruments, setSelectedInstruments] = useState<
-    InstrumentType[]
-  >([]);
+
   const toggleInstrument = (instrument: InstrumentType) => {
-    if (selectedInstruments.includes(instrument)) {
-      setSelectedInstruments(
-        selectedInstruments.filter((i) => i !== instrument),
-      );
+    if (profile.instruments.includes(instrument)) {
+      setProfile((current) => ({
+        ...current,
+        instruments: current.instruments.filter((i) => i !== instrument),
+      }));
     } else {
-      setSelectedInstruments([...selectedInstruments, instrument]);
+      setProfile((current) => ({
+        ...current,
+        instruments: [...current.instruments, instrument],
+      }));
     }
   };
 
@@ -37,17 +41,24 @@ export default function MusicProfile() {
     "Indie",
     "Classical",
   ];
-  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
+
   const toggleGenre = (genre: Genre) => {
-    if (selectedGenres.includes(genre)) {
-      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
+    if (profile.genres.includes(genre)) {
+      setProfile((current) => ({
+        ...current,
+        genres: current.genres.filter((g) => g !== genre),
+      }));
     } else {
-      setSelectedGenres([...selectedGenres, genre]);
+      setProfile((current) => ({
+        ...current,
+        genres: [...current.genres, genre],
+      }));
     }
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Step 2</Text>
       <Text style={styles.label}>Instruments</Text>
       <View style={styles.inputContainer}>
         {instruments.map((instrument) => (
@@ -55,7 +66,7 @@ export default function MusicProfile() {
             key={instrument}
             style={[
               styles.inputButton,
-              selectedInstruments.includes(instrument) && styles.selected,
+              profile.instruments.includes(instrument) && styles.selected,
             ]}
             onPress={() => toggleInstrument(instrument)}
           >
@@ -71,7 +82,7 @@ export default function MusicProfile() {
             key={g}
             style={[
               styles.inputButton,
-              selectedGenres.includes(g) && styles.selected,
+              profile.genres.includes(g) && styles.selected,
             ]}
             onPress={() => toggleGenre(g)}
           >
@@ -86,6 +97,17 @@ export default function MusicProfile() {
         placeholder="Years"
         placeholderTextColor="#6f6868"
         keyboardType="numeric"
+        value={
+          profile.yearsOfExperience === 0
+            ? ""
+            : profile.yearsOfExperience.toString()
+        }
+        onChangeText={(text) =>
+          setProfile((current) => ({
+            ...current,
+            yearsOfExperience: Number(text),
+          }))
+        }
       />
 
       <Text style={styles.label}>About you</Text>
@@ -94,6 +116,13 @@ export default function MusicProfile() {
         placeholder="Tell other musicians about yourself..."
         placeholderTextColor="#6f6868"
         multiline
+        value={profile.bio}
+        onChangeText={(text) =>
+          setProfile((current) => ({
+            ...current,
+            bio: text,
+          }))
+        }
       />
 
       <Pressable

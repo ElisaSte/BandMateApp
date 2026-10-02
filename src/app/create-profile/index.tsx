@@ -1,16 +1,28 @@
+import { useProfile } from "@/context/profile-context";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function CreateProfile() {
+  const { profile, setProfile } = useProfile();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create your profile</Text>
+      <Text style={styles.title}>Step 1</Text>
 
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Your name"
         placeholderTextColor="#6f6868"
+        value={profile.name}
+        //when user writes, update name in context (take current profile like it is and change name with text)
+        onChangeText={(text) =>
+          setProfile((current) => ({
+            ...current,
+            name: text,
+          }))
+        }
       />
 
       <Text style={styles.label}>Age</Text>
@@ -19,6 +31,14 @@ export default function CreateProfile() {
         placeholder="Your age"
         placeholderTextColor="#6f6868"
         keyboardType="numeric"
+        //if profile.age is 0 (as default) return "", else return profile age to string (because <Text>)
+        value={profile.age === 0 ? "" : profile.age.toString()}
+        onChangeText={(text) =>
+          setProfile((current) => ({
+            ...current,
+            age: Number(text),
+          }))
+        }
       />
 
       <Text style={styles.label}>City</Text>
@@ -26,6 +46,13 @@ export default function CreateProfile() {
         style={styles.input}
         placeholder="Where are you based?"
         placeholderTextColor="#6f6868"
+        value={profile.city}
+        onChangeText={(text) =>
+          setProfile((current) => ({
+            ...current,
+            city: text,
+          }))
+        }
       />
 
       <Pressable
