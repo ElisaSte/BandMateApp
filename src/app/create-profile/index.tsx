@@ -2,14 +2,7 @@ import { useProfile } from "@/context/profile-context";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
@@ -21,15 +14,6 @@ export default function CreateProfile() {
     if (!city) {
       setCityError("Please enter a city");
       return;
-    }
-
-    if (Platform.OS === "android") {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== "granted") {
-        setCityError("Location permission is required");
-        return;
-      }
     }
 
     try {
@@ -44,6 +28,7 @@ export default function CreateProfile() {
 
       setProfile((current) => ({
         ...current,
+        city,
         latitude,
         longitude,
       }));
@@ -53,6 +38,47 @@ export default function CreateProfile() {
       router.push("/create-profile/music");
     } catch {
       setCityError("Could not verify city");
+    }
+  };
+  const useCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      setCityError("Location permission is required");
+      return;
+    }
+
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+
+      const results = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      console.log("Location:", location.coords);
+      console.log("Geocode result:", results);
+
+      if (results.length === 0) {
+        setCityError("Could not determine your city");
+        return;
+      }
+
+      const city = results[0].city ?? results[0].district;
+      if (!city) {
+        setCityError("Could not determine your city");
+        return;
+      }
+
+      setProfile((current) => ({
+        ...current,
+        city,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }));
+
+      setCityError("");
+    } catch {
+      setCityError("Could not get your location");
     }
   };
   return (
@@ -97,15 +123,24 @@ export default function CreateProfile() {
         placeholder="Where are you based?"
         placeholderTextColor="#6f6868"
         value={profile.city}
-        onChangeText={(text) =>
+        onChangeText={(text) => {
           setProfile((current) => ({
             ...current,
             city: text,
-          }))
-        }
+            latitude: 0,
+            longitude: 0,
+          }));
+        }}
       />
+      {(profile.latitude !== 0 || profile.longitude !== 0) && (
+        <Text style={styles.detectedLocation}>
+          Location detected: {profile.city}
+        </Text>
+      )}
       {cityError && <Text style={styles.error}>{cityError}</Text>}
-
+      <Pressable style={styles.locationButton} onPress={useCurrentLocation}>
+        <Text style={styles.locationButtonText}>Use my location</Text>
+      </Pressable>
       <Pressable style={styles.button} onPress={handleContinue}>
         <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
@@ -163,5 +198,27 @@ const styles = StyleSheet.create({
     color: "#a39b9b",
     marginTop: -15,
     marginBottom: 15,
+  },
+  locationButton: {
+    backgroundColor: "#4A3434",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#a39b9b",
+  },
+
+  locationButtonText: {
+    color: "#a39b9b",
+    fontFamily: "MetalMania",
+    fontSize: 17,
+    textAlign: "center",
+  },
+  detectedLocation: {
+    color: "#a39b9b",
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
