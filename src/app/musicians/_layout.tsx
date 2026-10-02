@@ -1,20 +1,29 @@
 import { Stack } from "expo-router";
+import { Image } from "react-native";
 
 export default function MusiciansLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTitle: "Musician",
         headerTitleAlign: "center",
+
         headerStyle: {
           backgroundColor: "#362323",
         },
+
         headerTintColor: "#a39b9b",
-        headerTitleStyle: {
-          fontFamily: "MetalMania",
-          fontSize: 24,
-        },
+
+        headerTitle: () => (
+          <Image
+            source={require("@/assets/bm/BandMatelogo.png")}
+            style={{
+              width: 120,
+              height: 55,
+            }}
+            resizeMode="contain"
+          />
+        ),
       }}
     />
   );

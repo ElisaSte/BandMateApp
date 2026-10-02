@@ -1,27 +1,34 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { Image } from "react-native";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: "#362323",
-        },
+        tabBarStyle: { backgroundColor: "#362323" },
         tabBarActiveTintColor: "#a39b9b",
         tabBarInactiveTintColor: "#6f6868",
+
         headerShown: true,
         headerStyle: {
           backgroundColor: "#362323",
           borderBottomColor: "#a39b9b",
           borderBottomWidth: 1,
         },
+
         headerTintColor: "#a39b9b",
         headerTitleAlign: "center",
-        headerTitleStyle: {
-          fontFamily: "MetalMania",
-          fontSize: 24,
-        },
+        headerTitle: () => (
+          <Image
+            source={require("@/assets/bm/BandMatelogo.png")}
+            style={{
+              width: 120,
+              height: 55,
+            }}
+            resizeMode="contain"
+          />
+        ),
       }}
     >
       <Tabs.Screen

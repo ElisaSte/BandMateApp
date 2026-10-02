@@ -15,12 +15,12 @@ export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
   const [cityError, setCityError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
+  const [usedLocation, setUsedLocation] = useState(false);
 
   const handleContinue = async () => {
     const city = profile.city.trim();
-
-    if (!city) {
-      setCityError("Please enter a city");
+    if (usedLocation) {
+      router.push("/create-profile/music");
       return;
     }
 
@@ -88,8 +88,8 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       }));
+      setUsedLocation(true);
       setLoadingLocation(false);
-
       setCityError("");
     } catch {
       setCityError("Could not get your location");
@@ -107,7 +107,6 @@ export default function CreateProfile() {
         placeholder="Your name"
         placeholderTextColor="#6f6868"
         value={profile.name}
-        //when user writes, update name in context (take current profile like it is and change name with text)
         onChangeText={(text) =>
           setProfile((current) => ({
             ...current,
@@ -139,6 +138,8 @@ export default function CreateProfile() {
         placeholderTextColor="#6f6868"
         value={profile.city}
         onChangeText={(text) => {
+          setUsedLocation(false);
+
           setProfile((current) => ({
             ...current,
             city: text,

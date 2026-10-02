@@ -42,17 +42,29 @@ export default function FindMusicians() {
       setNearMe(false);
       return;
     }
+
     setLoadingNearby(true);
 
-    const savedProfile = await AsyncStorage.getItem("currentMusician");
+    try {
+      let musician = currentMusician;
 
-    if (savedProfile) {
-      const parsedProfile: Musician = JSON.parse(savedProfile);
-      setCurrentMusician(parsedProfile);
+      if (!musician) {
+        const savedProfile = await AsyncStorage.getItem("currentMusician");
+
+        if (savedProfile) {
+          musician = JSON.parse(savedProfile);
+          setCurrentMusician(musician);
+        }
+      }
+
+      if (!musician) {
+        return;
+      }
+
       setNearMe(true);
+    } finally {
+      setLoadingNearby(false);
     }
-
-    setLoadingNearby(false);
   };
   const filteredMusicians: Musician[] = musicians.filter((m) => {
     if (!m.name.toLowerCase().includes(search.toLowerCase())) {
@@ -74,6 +86,19 @@ export default function FindMusicians() {
         m.latitude,
         m.longitude,
       );
+      console.log(
+        m.name,
+        "my coords:",
+        currentMusician.latitude,
+        currentMusician.longitude,
+        "musician coords:",
+        m.latitude,
+        m.longitude,
+        "distance:",
+        distance,
+        "radius:",
+        radius,
+      );
 
       if (distance > radius) {
         return false;
@@ -89,6 +114,7 @@ export default function FindMusicians() {
   return (
     <View style={styles.root}>
       <ScrollView>
+        <Text style={styles.title}>Our musicians</Text>
         <Text style={styles.text}>Latest musicians</Text>
 
         <ScrollView
@@ -176,10 +202,17 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: "#362323",
   },
+  title: {
+    fontSize: 40,
+    color: "#a39b9b",
+    padding: 10,
+    marginTop: 10,
+    fontFamily: "MetalMania",
+  },
   text: {
     fontSize: 30,
     color: "#a39b9b",
-    padding: 20,
+    padding: 10,
     marginTop: 40,
     fontFamily: "MetalMania",
   },

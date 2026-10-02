@@ -30,8 +30,6 @@ export default function Profile() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.title}>Profile</Text>
-
       {musician && <MusicianProfile musician={musician} />}
 
       {/* Temporary development button */}
@@ -56,8 +54,8 @@ const styles = StyleSheet.create({
   title: {
     color: "#a39b9b",
     fontFamily: "MetalMania",
-    fontSize: 32,
-    textAlign: "center",
+    fontSize: 40,
+    textAlign: "left",
     marginBottom: 25,
   },
 

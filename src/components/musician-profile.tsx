@@ -8,81 +8,88 @@ interface MusicianProfileProps {
 
 export default function MusicianProfile({ musician }: MusicianProfileProps) {
   return (
-    <View style={styles.profileCard}>
-      <View style={styles.profileHeader}>
-        <View style={styles.profileImageContainer}>
-          {musician.profilePic ? (
-            <Image
-              source={
-                typeof musician.profilePic === "string"
-                  ? { uri: musician.profilePic }
-                  : musician.profilePic
-              }
-              style={styles.profileImage}
-            />
-          ) : (
-            <MaterialCommunityIcons name="account" size={70} color="#362323" />
-          )}
-        </View>
+    <View>
+      <Text style={styles.title}>Profile</Text>
+      <View style={styles.profileCard}>
+        <View style={styles.profileHeader}>
+          <View style={styles.profileImageContainer}>
+            {musician.profilePic ? (
+              <Image
+                source={
+                  typeof musician.profilePic === "string"
+                    ? { uri: musician.profilePic }
+                    : musician.profilePic
+                }
+                style={styles.profileImage}
+              />
+            ) : (
+              <MaterialCommunityIcons
+                name="account"
+                size={70}
+                color="#362323"
+              />
+            )}
+          </View>
 
-        <View style={styles.basicInfo}>
-          <Text style={styles.name}>
-            {musician.name}, {musician.age}
-          </Text>
+          <View style={styles.basicInfo}>
+            <Text style={styles.name}>
+              {musician.name}, {musician.age}
+            </Text>
 
-          <View style={styles.cityContainer}>
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              size={20}
-              color="#a39b9b"
-            />
-            <Text style={styles.city}>{musician.city}</Text>
+            <View style={styles.cityContainer}>
+              <MaterialCommunityIcons
+                name="map-marker-outline"
+                size={20}
+                color="#a39b9b"
+              />
+              <Text style={styles.city}>{musician.city}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Instruments</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Instruments</Text>
 
-        <View style={styles.tagsContainer}>
-          {musician.instruments.map((instrument) => (
-            <View key={instrument.id} style={styles.tag}>
-              <Text style={styles.tagText}>{instrument.name}</Text>
-            </View>
-          ))}
+          <View style={styles.tagsContainer}>
+            {musician.instruments.map((instrument) => (
+              <View key={instrument.id} style={styles.tag}>
+                <Text style={styles.tagText}>{instrument.name}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Genres</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Genres</Text>
 
-        <View style={styles.tagsContainer}>
-          {musician.genres.map((genre) => (
-            <View key={genre} style={styles.tag}>
-              <Text style={styles.tagText}>{genre}</Text>
-            </View>
-          ))}
+          <View style={styles.tagsContainer}>
+            {musician.genres.map((genre) => (
+              <View key={genre} style={styles.tag}>
+                <Text style={styles.tagText}>{genre}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Experience</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Experience</Text>
 
-        <View style={styles.experienceContainer}>
-          <MaterialCommunityIcons
-            name="music-circle-outline"
-            size={24}
-            color="#a39b9b"
-          />
+          <View style={styles.experienceContainer}>
+            <MaterialCommunityIcons
+              name="music-circle-outline"
+              size={24}
+              color="#a39b9b"
+            />
 
-          <Text style={styles.info}>{musician.yearsOfExperience} years</Text>
+            <Text style={styles.info}>{musician.yearsOfExperience} years</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About</Text>
 
-        <Text style={styles.bio}>{musician.bio}</Text>
+          <Text style={styles.bio}>{musician.bio}</Text>
+        </View>
       </View>
     </View>
   );
@@ -185,5 +192,12 @@ const styles = StyleSheet.create({
     color: "#a39b9b",
     fontSize: 16,
     lineHeight: 24,
+  },
+  title: {
+    color: "#a39b9b",
+    fontFamily: "MetalMania",
+    fontSize: 40,
+    textAlign: "left",
+    marginBottom: 25,
   },
 });
