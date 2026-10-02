@@ -65,10 +65,10 @@ export default function ProfilePhoto() {
       </Pressable>
 
       <Pressable
-        style={styles.skipButton}
+        style={styles.button}
         onPress={() => router.push("/create-profile/review")}
       >
-        <Text style={styles.skipText}>Skip</Text>
+        <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
     </View>
   );
@@ -106,18 +106,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#362323",
-    fontFamily: "MetalMania",
-    fontSize: 18,
-    textAlign: "center",
-  },
-
-  skipButton: {
-    padding: 14,
-    marginTop: 10,
-  },
-
-  skipText: {
-    color: "#a39b9b",
     fontFamily: "MetalMania",
     fontSize: 18,
     textAlign: "center",
