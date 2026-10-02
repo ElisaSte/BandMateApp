@@ -22,7 +22,11 @@ export default function MusicianCard(musicianProp: MusicianCardProps) {
       }}
     >
       <Image
-        source={musicianProp.musician.profilePic}
+        source={
+          typeof musicianProp.musician.profilePic === "string"
+            ? { uri: musicianProp.musician.profilePic }
+            : musicianProp.musician.profilePic
+        }
         style={styles.profilePic}
       />
       <View style={styles.info}>
@@ -61,5 +65,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     marginLeft: 15,
+  },
+  profilePicPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    backgroundColor: "#6f6868",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
