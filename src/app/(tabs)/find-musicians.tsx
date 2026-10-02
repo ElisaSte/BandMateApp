@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -21,6 +22,7 @@ export default function FindMusicians() {
   const [nearMe, setNearMe] = useState(false);
   const [radius, setRadius] = useState<number | null>(10);
   const [currentMusician, setCurrentMusician] = useState<Musician | null>(null);
+  const [loadingNearby, setLoadingNearby] = useState(false);
   useEffect(() => {
     const loadProfile = async () => {
       const savedProfile = await AsyncStorage.getItem("currentMusician");
@@ -34,6 +36,23 @@ export default function FindMusicians() {
     loadProfile();
   }, []);
 
+  const handleNearMe = async () => {
+    if (nearMe) {
+      setNearMe(false);
+      return;
+    }
+    setLoadingNearby(true);
+
+    const savedProfile = await AsyncStorage.getItem("currentMusician");
+
+    if (savedProfile) {
+      const parsedProfile: Musician = JSON.parse(savedProfile);
+      setCurrentMusician(parsedProfile);
+      setNearMe(true);
+    }
+
+    setLoadingNearby(false);
+  };
   const filteredMusicians: Musician[] = musicians.filter((m) => {
     if (!m.name.toLowerCase().includes(search.toLowerCase())) {
       //excludes musicians who´s name doesn´t include the search
@@ -87,10 +106,17 @@ export default function FindMusicians() {
           </Picker>
         </View>
         <Pressable
-          onPress={() => setNearMe(true)}
+          onPress={handleNearMe}
           style={styles.locationButton}
+          disabled={loadingNearby}
         >
-          <Text style={styles.locationButtonText}>Near me</Text>
+          {loadingNearby ? (
+            <ActivityIndicator color="#362323" />
+          ) : (
+            <Text style={styles.locationButtonText}>
+              {nearMe ? "Show all" : "Near me"}
+            </Text>
+          )}
         </Pressable>
         {nearMe && currentMusician && (
           <View style={styles.pickerContainer}>
