@@ -1,8 +1,9 @@
 import { InstrumentType } from "@/data/instrument";
 import { Musician } from "@/data/musician";
 import { calculateDistance } from "@/utils/distance";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
-import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -13,30 +14,25 @@ import {
 } from "react-native";
 import MusicianCard from "../../components/musician-card";
 import { musicians } from "../../data/musicians";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
 
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
   const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null,
-  );
+  const [nearMe, setNearMe] = useState(false);
   const [radius, setRadius] = useState<number | null>(10);
+  const [currentMusician, setCurrentMusician] = useState<Musician | null>(null);
+  useEffect(() => {
+    const loadProfile = async () => {
+      const savedProfile = await AsyncStorage.getItem("currentMusician");
 
-  const getLocation = async () => {
-    //ask phone to use position
-    const { status } = await Location.requestForegroundPermissionsAsync();
+      if (savedProfile) {
+        const parsedProfile: Musician = JSON.parse(savedProfile);
+        setCurrentMusician(parsedProfile);
+      }
+    };
 
-    if (status !== "granted") {
-      return;
-    }
-
-    //if user accept, get location
-    const currentLocation = await Location.getCurrentPositionAsync({});
-    console.log("LOCATION:", currentLocation);
-    setLocation(currentLocation);
-  };
+    loadProfile();
+  }, []);
 
   const filteredMusicians: Musician[] = musicians.filter((m) => {
     if (!m.name.toLowerCase().includes(search.toLowerCase())) {
@@ -51,10 +47,10 @@ export default function FindMusicians() {
       //excludes musician that doesn't have the selected instrument in the instrument list
       return false;
     }
-    if (location && radius !== null) {
+    if (nearMe && currentMusician && radius !== null) {
       const distance = calculateDistance(
-        location.coords.latitude,
-        location.coords.longitude,
+        currentMusician.latitude,
+        currentMusician.longitude,
         m.latitude,
         m.longitude,
       );
@@ -90,10 +86,13 @@ export default function FindMusicians() {
             <Picker.Item label="Keyboard" value="Keyboard" />
           </Picker>
         </View>
-        <Pressable onPress={getLocation} style={styles.locationButton}>
+        <Pressable
+          onPress={() => setNearMe(true)}
+          style={styles.locationButton}
+        >
           <Text style={styles.locationButtonText}>Near me</Text>
         </Pressable>
-        {location && (
+        {nearMe && currentMusician && (
           <View style={styles.pickerContainer}>
             <Text style={styles.radiusText}>Search radius</Text>
             <Picker
@@ -196,12 +195,6 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     fontSize: 18,
     textAlign: "center",
-  },
-  locationText: {
-    color: "#a39b9b",
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 10,
   },
   radiusText: {
     color: "#a39b9b",
