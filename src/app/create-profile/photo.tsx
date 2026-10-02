@@ -56,7 +56,7 @@ export default function ProfilePhoto() {
 
       <Pressable
         style={styles.skipButton}
-        onPress={() => router.push("/(tabs)")}
+        onPress={() => router.push("/create-profile/review")}
       >
         <Text style={styles.skipText}>Skip</Text>
       </Pressable>

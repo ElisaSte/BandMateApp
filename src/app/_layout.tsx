@@ -1,3 +1,4 @@
+import { ProfileProvider } from "@/context/profile-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -20,26 +21,28 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <Stack>
-      <Stack.Screen
-        name="onboarding"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-        }}
-      />
+    <ProfileProvider>
+      <Stack>
+        <Stack.Screen
+          name="onboarding"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
 
-      <Stack.Screen
-        name="musicians"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+        <Stack.Screen
+          name="musicians"
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </ProfileProvider>
   );
 }
