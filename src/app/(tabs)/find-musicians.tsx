@@ -1,3 +1,4 @@
+import RecentMusicianCard from "@/components/recent-musician-card";
 import { InstrumentType } from "@/data/instrument";
 import { Musician } from "@/data/musician";
 import { calculateDistance } from "@/utils/distance";
@@ -81,10 +82,24 @@ export default function FindMusicians() {
 
     return true;
   });
+  const latestMusicians = [...musicians]
+    .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
+    .slice(0, 8);
 
   return (
     <View style={styles.root}>
       <ScrollView>
+        <Text style={styles.text}>Latest musicians</Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.latestContainer}
+        >
+          {latestMusicians.map((musician) => (
+            <RecentMusicianCard key={musician.id} musician={musician} />
+          ))}
+        </ScrollView>
         <Text style={styles.text}>Filter</Text>
         <TextInput
           style={styles.searchInput}
@@ -228,5 +243,9 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     marginBottom: 6,
     marginTop: 5,
+  },
+  latestContainer: {
+    paddingHorizontal: 8,
+    paddingBottom: 10,
   },
 });

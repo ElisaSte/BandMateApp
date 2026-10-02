@@ -9,7 +9,7 @@ export default function RootLayout() {
     const checkOnboarding = async () => {
       const completed = await AsyncStorage.getItem("onboardingCompleted");
       if (completed === "true") {
-        router.replace("/(tabs)");
+        router.replace("/(tabs)/find-musicians");
       } else {
         router.replace("/onboarding");
       }
