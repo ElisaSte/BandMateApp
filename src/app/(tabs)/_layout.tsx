@@ -32,6 +32,19 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
+        name="find-musicians"
+        options={{
+          title: "Musicians",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="account-group-outline"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
@@ -45,18 +58,19 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="find-musicians"
+        name="messages"
         options={{
-          title: "Musicians",
+          title: "Messages",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="account-group-outline"
+              name="message-text"
               size={size}
               color={color}
             />
           ),
         }}
       />
+
       <Tabs.Screen
         name="ads"
         options={{
