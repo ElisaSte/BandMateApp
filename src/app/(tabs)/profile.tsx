@@ -1,7 +1,6 @@
 import MusicianProfile from "@/components/musician-profile";
 import type { Musician } from "@/data/musician";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
@@ -32,16 +31,7 @@ export default function Profile() {
       showsVerticalScrollIndicator={false}
     >
       {musician && <MusicianProfile musician={musician} />}
-      <Pressable
-        style={styles.messageButton}
-        onPress={() => router.push("/messages")}
-      >
-        <Text style={styles.messageButtonText}>Messages</Text>
-      </Pressable>
 
-      <Pressable style={styles.resetButton} onPress={resetOnboarding}>
-        <Text style={styles.resetButtonText}>Reset onboarding</Text>
-      </Pressable>
       {/* Temporary development button */}
       <Pressable style={styles.resetButton} onPress={resetOnboarding}>
         <Text style={styles.resetButtonText}>Reset onboarding</Text>
