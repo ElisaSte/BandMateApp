@@ -1,3 +1,4 @@
+import ConversationCard from "@/components/conversation-card";
 import { conversations } from "@/data/conversations";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
@@ -9,12 +10,8 @@ export default function Messages() {
       <FlatList
         data={conversations}
         keyExtractor={(conversation) => conversation.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.musician.name}</Text>
-            <Text>{item.messages[item.messages.length - 1]?.text}</Text>
-          </View>
-        )}
+        renderItem={({ item }) => <ConversationCard conversation={item} />}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
