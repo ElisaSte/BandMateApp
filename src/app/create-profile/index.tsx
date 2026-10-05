@@ -16,6 +16,21 @@ import {
   View,
 } from "react-native";
 
+const getCityFromAddress = (address: Location.LocationGeocodedAddress) => {
+  if (address.city) {
+    return address.city;
+  }
+
+  if (address.formattedAddress) {
+    const match = address.formattedAddress.match(/\b\d{3}\s?\d{2}\s+([^,]+)/);
+
+    if (match) {
+      return match[1].trim();
+    }
+  }
+
+  return null;
+};
 export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
   const [cityError, setCityError] = useState("");
@@ -71,8 +86,8 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      //console.log("Location:", location.coords);
-      //console.log("Geocode result:", results);
+      console.log("Location:", location.coords);
+      console.log("Geocode result:", results);
 
       if (results.length === 0) {
         setCityError("Could not determine your city");
@@ -80,7 +95,7 @@ export default function CreateProfile() {
         return;
       }
 
-      const city = results[0].city ?? results[0].district;
+      const city = getCityFromAddress(results[0]);
       if (!city) {
         setCityError("Could not determine your city");
         setLoadingLocation(false);
