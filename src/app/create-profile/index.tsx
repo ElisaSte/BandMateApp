@@ -4,10 +4,15 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
@@ -97,83 +102,96 @@ export default function CreateProfile() {
     }
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create your profile</Text>
-      <Text style={styles.title}>Step 1</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <Text style={styles.title}>Create your profile</Text>
+            <Text style={styles.title}>Step 1</Text>
 
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Your name"
-        placeholderTextColor="#6f6868"
-        value={profile.name}
-        onChangeText={(text) =>
-          setProfile((current) => ({
-            ...current,
-            name: text,
-          }))
-        }
-      />
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your name"
+              placeholderTextColor="#6f6868"
+              value={profile.name}
+              onChangeText={(text) =>
+                setProfile((current) => ({
+                  ...current,
+                  name: text,
+                }))
+              }
+            />
 
-      <Text style={styles.label}>Age</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Your age"
-        placeholderTextColor="#6f6868"
-        keyboardType="numeric"
-        //if profile.age is 0 (as default) return "", else return profile age to string (because <Text>)
-        value={profile.age === 0 ? "" : profile.age.toString()}
-        onChangeText={(text) =>
-          setProfile((current) => ({
-            ...current,
-            age: Number(text),
-          }))
-        }
-      />
+            <Text style={styles.label}>Age</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your age"
+              placeholderTextColor="#6f6868"
+              keyboardType="numeric"
+              //if profile.age is 0 (as default) return "", else return profile age to string (because <Text>)
+              value={profile.age === 0 ? "" : profile.age.toString()}
+              onChangeText={(text) =>
+                setProfile((current) => ({
+                  ...current,
+                  age: Number(text),
+                }))
+              }
+            />
 
-      <Text style={styles.label}>City</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Where are you based?"
-        placeholderTextColor="#6f6868"
-        value={profile.city}
-        onChangeText={(text) => {
-          setUsedLocation(false);
+            <Text style={styles.label}>City</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Where are you based?"
+              placeholderTextColor="#6f6868"
+              value={profile.city}
+              onChangeText={(text) => {
+                setUsedLocation(false);
 
-          setProfile((current) => ({
-            ...current,
-            city: text,
-            latitude: 0,
-            longitude: 0,
-          }));
-        }}
-      />
-      {(profile.latitude !== 0 || profile.longitude !== 0) && (
-        <Text style={styles.detectedLocation}>
-          Location detected: {profile.city}
-        </Text>
-      )}
-      {cityError && <Text style={styles.error}>{cityError}</Text>}
-      <Pressable
-        style={styles.locationButton}
-        onPress={useCurrentLocation}
-        disabled={loadingLocation}
-      >
-        {loadingLocation ? (
-          <View style={styles.loadingContent}>
-            <ActivityIndicator color="#a39b9b" />
-            <Text style={styles.locationButtonText}>
-              Finding your location...
-            </Text>
+                setProfile((current) => ({
+                  ...current,
+                  city: text,
+                  latitude: 0,
+                  longitude: 0,
+                }));
+              }}
+            />
+            {(profile.latitude !== 0 || profile.longitude !== 0) && (
+              <Text style={styles.detectedLocation}>
+                Location detected: {profile.city}
+              </Text>
+            )}
+            {cityError && <Text style={styles.error}>{cityError}</Text>}
+            <Pressable
+              style={styles.locationButton}
+              onPress={useCurrentLocation}
+              disabled={loadingLocation}
+            >
+              {loadingLocation ? (
+                <View style={styles.loadingContent}>
+                  <ActivityIndicator color="#a39b9b" />
+                  <Text style={styles.locationButtonText}>
+                    Finding your location...
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.locationButtonText}>Use my location</Text>
+              )}
+            </Pressable>
+            <Pressable style={styles.button} onPress={handleContinue}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </Pressable>
           </View>
-        ) : (
-          <Text style={styles.locationButtonText}>Use my location</Text>
-        )}
-      </Pressable>
-      <Pressable style={styles.button} onPress={handleContinue}>
-        <Text style={styles.buttonText}>Continue</Text>
-      </Pressable>
-    </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -255,5 +273,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
+  },
+  content: {
+    flexGrow: 1,
   },
 });

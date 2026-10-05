@@ -1,6 +1,7 @@
 import { conversations } from "@/data/conversations";
 import type { Message } from "@/data/message";
 import { musicians } from "@/data/musicians";
+import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -12,10 +13,11 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Chat() {
   const { id } = useLocalSearchParams();
-
+  const insets = useSafeAreaInsets();
   const musician = musicians.find((musician) => musician.id === Number(id));
 
   const conversation = conversations.find(
@@ -36,7 +38,7 @@ export default function Chat() {
     );
   }
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!message.trim()) {
       return;
     }
@@ -50,6 +52,8 @@ export default function Chat() {
 
     setMessages((current) => [...current, newMessage]);
     setMessage("");
+
+    await Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Confirm);
   };
 
   return (
@@ -146,7 +150,14 @@ export default function Chat() {
         }}
       />
 
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
         <TextInput
           style={styles.input}
           placeholder="Write a message..."

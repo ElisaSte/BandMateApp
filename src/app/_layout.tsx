@@ -1,6 +1,7 @@
 import { ProfileProvider } from "@/context/profile-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 
 export default function RootLayout() {
@@ -22,9 +23,16 @@ export default function RootLayout() {
   }
   return (
     <ProfileProvider>
+      <StatusBar style="light" />
       <Stack>
         <Stack.Screen
           name="onboarding"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="create-profile"
           options={{
             headerShown: false,
           }}
@@ -44,6 +52,12 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="chat"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ads"
           options={{
             headerShown: false,
           }}

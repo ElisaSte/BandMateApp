@@ -2,7 +2,18 @@ import { useProfile } from "@/context/profile-context";
 import { Genre } from "@/data/genre";
 import type { InstrumentType } from "@/data/instrument";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 export default function MusicProfile() {
   const { profile, setProfile } = useProfile();
@@ -57,81 +68,94 @@ export default function MusicProfile() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Step 2</Text>
-      <Text style={styles.label}>Instruments</Text>
-      <View style={styles.inputContainer}>
-        {instruments.map((instrument) => (
-          <Pressable
-            key={instrument}
-            style={[
-              styles.inputButton,
-              profile.instruments.includes(instrument) && styles.selected,
-            ]}
-            onPress={() => toggleInstrument(instrument)}
-          >
-            <Text style={styles.text}>{instrument}</Text>
-          </Pressable>
-        ))}
-      </View>
-
-      <Text style={styles.label}>Genres</Text>
-      <View style={styles.inputContainer}>
-        {genres.map((g) => (
-          <Pressable
-            key={g}
-            style={[
-              styles.inputButton,
-              profile.genres.includes(g) && styles.selected,
-            ]}
-            onPress={() => toggleGenre(g)}
-          >
-            <Text style={styles.text}>{g}</Text>
-          </Pressable>
-        ))}
-      </View>
-
-      <Text style={styles.label}>Years of experience</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Years"
-        placeholderTextColor="#6f6868"
-        keyboardType="numeric"
-        value={
-          profile.yearsOfExperience === 0
-            ? ""
-            : profile.yearsOfExperience.toString()
-        }
-        onChangeText={(text) =>
-          setProfile((current) => ({
-            ...current,
-            yearsOfExperience: Number(text),
-          }))
-        }
-      />
-
-      <Text style={styles.label}>About you</Text>
-      <TextInput
-        style={[styles.input, styles.bioInput]}
-        placeholder="Tell other musicians about yourself..."
-        placeholderTextColor="#6f6868"
-        multiline
-        value={profile.bio}
-        onChangeText={(text) =>
-          setProfile((current) => ({
-            ...current,
-            bio: text,
-          }))
-        }
-      />
-
-      <Pressable
-        style={styles.button}
-        onPress={() => router.push("/create-profile/photo")}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Text style={styles.buttonText}>Continue</Text>
-      </Pressable>
-    </View>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <Text style={styles.title}>Step 2</Text>
+            <Text style={styles.label}>Instruments</Text>
+            <View style={styles.inputContainer}>
+              {instruments.map((instrument) => (
+                <Pressable
+                  key={instrument}
+                  style={[
+                    styles.inputButton,
+                    profile.instruments.includes(instrument) && styles.selected,
+                  ]}
+                  onPress={() => toggleInstrument(instrument)}
+                >
+                  <Text style={styles.text}>{instrument}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text style={styles.label}>Genres</Text>
+            <View style={styles.inputContainer}>
+              {genres.map((g) => (
+                <Pressable
+                  key={g}
+                  style={[
+                    styles.inputButton,
+                    profile.genres.includes(g) && styles.selected,
+                  ]}
+                  onPress={() => toggleGenre(g)}
+                >
+                  <Text style={styles.text}>{g}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text style={styles.label}>Years of experience</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Years"
+              placeholderTextColor="#6f6868"
+              keyboardType="numeric"
+              value={
+                profile.yearsOfExperience === 0
+                  ? ""
+                  : profile.yearsOfExperience.toString()
+              }
+              onChangeText={(text) =>
+                setProfile((current) => ({
+                  ...current,
+                  yearsOfExperience: Number(text),
+                }))
+              }
+            />
+
+            <Text style={styles.label}>About you</Text>
+            <TextInput
+              style={[styles.input, styles.bioInput]}
+              placeholder="Tell other musicians about yourself..."
+              placeholderTextColor="#6f6868"
+              multiline
+              value={profile.bio}
+              onChangeText={(text) =>
+                setProfile((current) => ({
+                  ...current,
+                  bio: text,
+                }))
+              }
+            />
+
+            <Pressable
+              style={styles.button}
+              onPress={() => router.push("/create-profile/photo")}
+            >
+              <Text style={styles.buttonText}>Continue</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -207,5 +231,9 @@ const styles = StyleSheet.create({
   text: {
     color: "#362323",
     fontSize: 16,
+  },
+  content: {
+    flexGrow: 1,
+    padding: 20,
   },
 });

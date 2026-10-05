@@ -1,56 +1,243 @@
-# Welcome to your Expo app 👋
+# BandMate
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+BandMate is a mobile application for musicians who want to find other musicians, connect with them, and discover opportunities to join or build a band.
 
-## Get started
+The application was developed as an individual school assignment in the course **Applikationsutveckling (APP) SUVNET25**, using React Native, Expo and TypeScript.
 
-1. Install dependencies
+## Description
 
-   ```bash
-   npm install
-   ```
+BandMate is designed for musicians looking for people to play with.
 
-2. Start the app
+Users can create their own musician profile with information such as name, age, city, instruments, genres, years of experience, a short biography and a profile picture.
 
-   ```bash
-   npx expo start
-   ```
+The application allows users to:
 
-In the output, you'll find options to open the app in a
+* Search for musicians by name
+* Filter musicians by instrument
+* Find musicians within a selected distance
+* Browse recently registered musicians
+* View detailed musician profiles
+* Start conversations with other musicians
+* View a list of conversations
+* Read and send mock messages
+* Browse active musician advertisements
+* Filter advertisements by instrument
+* View full advertisement details
+* Contact the musician who created an advertisement
+* View active and closed advertisements on a musician's profile
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## How to build and run the project
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Clone the repository
 
 ```bash
-npm run reset-project
+git clone 
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Navigate to the project folder
 
-### Other setup steps
+```bash
+cd BandMateApp
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### 3. Install dependencies
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 4. Start the Expo development server
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+### 5. Run the app in Expo Go
 
-Join our community of developers creating universal apps.
+Install **Expo Go** on your mobile device and scan the QR code displayed by Expo.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The application can also be run using an Android emulator or an iOS simulator.
+
+## React Native components used
+
+### View
+
+Used to structure and group content throughout the application.
+
+### Text
+
+Used for headings, labels, descriptions, buttons and other text content.
+
+### Image
+
+Used to display musician profile pictures and other images.
+
+### Pressable
+
+Used for interactive elements such as buttons, musician cards, conversation cards and advertisement cards.
+
+### TextInput
+
+Used for editable form fields, musician search and writing messages.
+
+### ScrollView
+
+Used for vertically scrollable pages and for horizontally scrolling through recently registered musicians.
+
+### FlatList
+
+Used to efficiently display lists of data, including messages and conversations.
+
+### ActivityIndicator
+
+Used to show loading feedback while the user's location is being retrieved.
+
+## Expo SDK modules used
+
+### expo-location
+
+Used to request location permission, retrieve the device's current location, determine the user's city through reverse geocoding, and convert manually entered cities into coordinates. The coordinates are also used by the "Near me" feature.
+
+### expo-image-picker
+
+Used when creating a profile to allow the user to select a profile picture from the device gallery or take a new photo with the camera.
+
+### expo-haptics
+
+Used to provide haptic feedback when the user sends a message.
+
+### expo-status-bar
+
+Used to control the appearance of the device status bar. BandMate uses a light status bar style to fit the application's dark visual theme.
+
+## Navigation
+
+BandMate uses **Expo Router** for navigation.
+
+The main navigation consists of four tabs:
+
+* Musicians
+* Messages
+* Profile
+* Ads
+
+Additional screens are used for detailed musician profiles, individual conversations and advertisement details.
+
+The application uses dynamic routes such as:
+
+```text
+/musicians/[id]
+/chat/[id]
+/ads/[id]
+```
+
+These screens use `useLocalSearchParams` to read the selected ID.
+
+This allows users to navigate from lists to specific musicians, conversations and advertisements.
+
+## Data and storage
+
+The application uses mock data for musicians, advertisements, conversations and messages.
+
+The user's own profile is stored locally using `AsyncStorage`.
+
+There is currently no backend or Web API.
+
+The messaging system is also a mock implementation. Messages are handled locally in the application and are not sent to another device or stored on a remote server.
+
+## Additional external React Native module
+
+The project also uses:
+
+### @react-native-picker/picker
+
+Used for dropdown selections such as instrument filters and search radius.
+
+## AI usage
+
+AI tools were used as a development aid throughout the project.
+
+One of the main uses of AI was to help understand **React Native and Expo**, especially when working with concepts that were new to me. AI was also useful for discovering and understanding React Native components and Expo modules that could be relevant to the application's functionality.
+
+AI was also used during troubleshooting and debugging. When something did not work as expected, such as routing, keyboard handling, location handling or component behaviour, AI was used to help identify possible causes and suggest solutions. The proposed solutions were then tested in the application and adjusted when necessary.
+
+Another important use of AI was **brainstorming and planning**. It was used to discuss ideas for the application's structure, features, navigation and UI, and to evaluate different ways of implementing them before writing the code.
+
+AI was used more extensively when developing the **messaging functionality**. This included brainstorming the structure of conversations and messages, planning the navigation between conversations and chats, designing the mock messaging flow, and troubleshooting the different parts of the chat implementation.
+
+The AI-generated suggestions were not accepted without verification. The code was tested continuously during development, both in an emulator and on a physical Android device. Errors and unexpected behaviour were investigated and corrected during the development process.
+
+The use of AI was therefore mainly as a learning, problem-solving and development support tool, while the resulting code was reviewed, tested and adapted as part of the development process.
+
+## Project structure
+
+```text
+src/
+├── app/
+│   ├── (tabs)/
+│   │   ├── find-musicians.tsx
+│   │   ├── messages.tsx
+│   │   ├── profile.tsx
+│   │   └── ads.tsx
+│   │
+│   ├── musicians/
+│   │   └── [id].tsx
+│   │
+│   ├── chat/
+│   │   └── [id].tsx
+│   │
+│   ├── ads/
+│   │   └── [id].tsx
+│   │
+│   └── ...
+│
+├── components/
+│   ├── musician-card.tsx
+│   ├── recent-musician-card.tsx
+│   ├── musician-profile.tsx
+│   ├── conversation-card.tsx
+│   └── ad-card.tsx
+│
+├── data/
+│   ├── musician.ts
+│   ├── musicians.ts
+│   ├── instrument.ts
+│   ├── message.ts
+│   ├── conversation.ts
+│   ├── conversations.ts
+│   ├── ad.ts
+│   └── ads.ts
+│
+└── context/
+    └── profile-context.tsx
+```
+
+## Requirements checklist
+
+### Pass requirements (G)
+
+* [x] At least 4 React Native components are used
+* [x] At least 4 Expo SDK modules are used
+* [x] The used React Native components and Expo SDK modules are documented in this README
+* [x] Expo Router is used for navigation
+* [x] At least one screen receives a parameter through a dynamic route
+* [x] Git and GitHub have been used throughout development
+* [x] The project contains a README.md
+* [x] The project has been submitted on time
+* [ ] The oral presentation has been completed
+
+### Pass with distinction requirements (VG)
+
+* [x] An additional external React Native module is used: `@react-native-picker/picker`
+* [ ] The application retrieves data from a Web API
+* [x] The use of AI tools is documented in this README
+
+## Limitations
+
+BandMate currently uses mock data and does not have a backend or Web API.
+
+The messaging system is therefore simulated locally. Messages can be sent and displayed within the current chat, but they are not synchronized between different devices or users.
+
+The application is intended to demonstrate React Native, Expo, TypeScript, navigation, reusable components and mobile device functionality.
+
+
