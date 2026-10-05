@@ -136,14 +136,15 @@ export default function CreateProfile() {
               placeholder="Your age"
               placeholderTextColor="#6f6868"
               keyboardType="numeric"
-              //if profile.age is 0 (as default) return "", else return profile age to string (because <Text>)
               value={profile.age === 0 ? "" : profile.age.toString()}
-              onChangeText={(text) =>
+              onChangeText={(text) => {
+                const numericText = text.replace(/[^0-9]/g, "");
+
                 setProfile((current) => ({
                   ...current,
-                  age: Number(text),
-                }))
-              }
+                  age: numericText === "" ? 0 : Number(numericText),
+                }));
+              }}
             />
 
             <Text style={styles.label}>City</Text>

@@ -1,12 +1,15 @@
 import MusicianProfile from "@/components/musician-profile";
 import type { Musician } from "@/data/musician";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 export default function Profile() {
   const resetOnboarding = async () => {
     await AsyncStorage.removeItem("onboardingCompleted");
+    await AsyncStorage.removeItem("currentMusician");
+    router.replace("/onboarding");
   };
 
   const [musician, setMusician] = useState<Musician | null>(null);

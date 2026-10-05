@@ -123,12 +123,14 @@ export default function MusicProfile() {
                   ? ""
                   : profile.yearsOfExperience.toString()
               }
-              onChangeText={(text) =>
+              onChangeText={(text) => {
+                const numericText = text.replace(/[^0-9]/g, "");
+
                 setProfile((current) => ({
                   ...current,
-                  yearsOfExperience: Number(text),
-                }))
-              }
+                  age: numericText === "" ? 0 : Number(numericText),
+                }));
+              }}
             />
 
             <Text style={styles.label}>About you</Text>
