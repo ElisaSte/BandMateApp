@@ -1,3 +1,4 @@
+import { AdProvider } from "@/context/ad-context";
 import { ProfileProvider } from "@/context/profile-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
@@ -23,46 +24,48 @@ export default function RootLayout() {
   }
   return (
     <ProfileProvider>
-      <StatusBar style="light" />
-      <Stack>
-        <Stack.Screen
-          name="onboarding"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="create-profile"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-          }}
-        />
+      <AdProvider>
+        <StatusBar style="light" />
+        <Stack>
+          <Stack.Screen
+            name="onboarding"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="create-profile"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
 
-        <Stack.Screen
-          name="musicians"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="chat"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="ads"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack>
+          <Stack.Screen
+            name="musicians"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="chat"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ads"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      </AdProvider>
     </ProfileProvider>
   );
 }
