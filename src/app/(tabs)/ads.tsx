@@ -1,5 +1,5 @@
 import AdCard from "@/components/ad-card";
-import { ads } from "@/data/ads";
+import { useAds } from "@/context/ad-context";
 import type { InstrumentType } from "@/data/instrument";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
@@ -9,7 +9,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Ads() {
   const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
-
+  const { ads } = useAds();
   const filteredAds = ads
     .filter((ad) => ad.isActive)
     .filter((ad) => {

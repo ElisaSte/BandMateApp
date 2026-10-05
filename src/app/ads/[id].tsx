@@ -1,5 +1,7 @@
-import { ads } from "@/data/ads";
+import { useAds } from "@/context/ad-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -11,6 +13,23 @@ import {
 
 export default function AdDetails() {
   const { id } = useLocalSearchParams();
+  const { ads, closeAd } = useAds();
+  const [currentMusicianId, setCurrentMusicianId] = useState<number | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const loadCurrentMusician = async () => {
+      const savedMusician = await AsyncStorage.getItem("currentMusician");
+
+      if (savedMusician) {
+        const musician = JSON.parse(savedMusician);
+        setCurrentMusicianId(musician.id);
+      }
+    };
+
+    loadCurrentMusician();
+  }, []);
 
   const ad = ads.find((ad) => ad.id === Number(id));
 
@@ -21,6 +40,8 @@ export default function AdDetails() {
       </View>
     );
   }
+  const isOwner =
+    currentMusicianId !== null && ad.musician.id === currentMusicianId;
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString([], {
@@ -75,7 +96,7 @@ export default function AdDetails() {
 
       <Text style={styles.description}>{ad.description}</Text>
 
-      {ad.isActive ? (
+      {ad.isActive && !isOwner && (
         <Pressable
           style={styles.messageButton}
           onPress={() => {
@@ -91,7 +112,15 @@ export default function AdDetails() {
             Message {ad.musician.name}
           </Text>
         </Pressable>
-      ) : (
+      )}
+
+      {ad.isActive && isOwner && (
+        <Pressable style={styles.closeButton} onPress={() => closeAd(ad.id)}>
+          <Text style={styles.closeButtonText}>Close ad</Text>
+        </Pressable>
+      )}
+
+      {!ad.isActive && (
         <Text style={styles.closed}>This ad is no longer active.</Text>
       )}
     </ScrollView>
@@ -200,5 +229,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     marginTop: 50,
+  },
+  closeButton: {
+    backgroundColor: "#4A3434",
+    borderWidth: 1,
+    borderColor: "#a39b9b",
+    paddingVertical: 14,
+    borderRadius: 10,
+  },
+
+  closeButtonText: {
+    color: "#a39b9b",
+    fontFamily: "MetalMania",
+    fontSize: 20,
+    textAlign: "center",
   },
 });

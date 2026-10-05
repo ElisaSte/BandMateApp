@@ -12,6 +12,7 @@ import {
 interface AdContextType {
   ads: Ad[];
   addAd: (ad: Ad) => void;
+  closeAd: (adId: number) => void;
 }
 
 const AdContext = createContext<AdContextType | undefined>(undefined);
@@ -37,9 +38,18 @@ export function AdProvider({ children }: { children: ReactNode }) {
     setAds(updatedAds);
     await AsyncStorage.setItem("ads", JSON.stringify(updatedAds));
   };
+  const closeAd = async (adId: number) => {
+    const updatedAds = ads.map((ad) =>
+      ad.id === adId ? { ...ad, isActive: false } : ad,
+    );
 
+    setAds(updatedAds);
+    await AsyncStorage.setItem("ads", JSON.stringify(updatedAds));
+  };
   return (
-    <AdContext.Provider value={{ ads, addAd }}>{children}</AdContext.Provider>
+    <AdContext.Provider value={{ ads, addAd, closeAd }}>
+      {children}
+    </AdContext.Provider>
   );
 }
 
