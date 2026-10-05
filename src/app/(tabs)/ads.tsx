@@ -1,9 +1,11 @@
 import AdCard from "@/components/ad-card";
 import { ads } from "@/data/ads";
 import type { InstrumentType } from "@/data/instrument";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Ads() {
   const [instrument, setInstrument] = useState<InstrumentType | "All">("All");
@@ -22,7 +24,16 @@ export default function Ads() {
   return (
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Ads</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Ads</Text>
+
+          <Pressable
+            style={styles.addButton}
+            onPress={() => router.push("/create-ad")}
+          >
+            <MaterialCommunityIcons name="plus" size={28} color="#362323" />
+          </Pressable>
+        </View>
 
         <Text style={styles.text}>Filter by instrument</Text>
 
@@ -60,14 +71,21 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: "#362323",
   },
-
-  title: {
-    fontSize: 30,
-    color: "#a39b9b",
-    padding: 20,
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 40,
-    fontFamily: "MetalMania",
-    textAlign: "center",
+    marginBottom: 15,
+  },
+
+  addButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#a39b9b",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   text: {
@@ -93,5 +111,10 @@ const styles = StyleSheet.create({
     fontFamily: "MetalMania",
     textAlign: "center",
     marginTop: 30,
+  },
+  title: {
+    fontSize: 30,
+    color: "#a39b9b",
+    fontFamily: "MetalMania",
   },
 });
