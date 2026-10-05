@@ -128,7 +128,8 @@ export default function MusicProfile() {
 
                 setProfile((current) => ({
                   ...current,
-                  age: numericText === "" ? 0 : Number(numericText),
+                  yearsOfExperience:
+                    numericText === "" ? 0 : Number(numericText),
                 }));
               }}
             />
