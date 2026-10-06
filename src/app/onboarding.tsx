@@ -35,7 +35,7 @@ export default function Onboarding() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push("../create-profile")}
+        onPress={() => router.push("/create-profile")}
       >
         <Text style={styles.buttonText}>Create your profile</Text>
       </Pressable>
@@ -82,15 +82,6 @@ const styles = StyleSheet.create({
     color: "#362323",
     fontFamily: "MetalMania",
     fontSize: 19,
-    textAlign: "center",
-  },
-  secondaryButton: {
-    padding: 12,
-  },
-  secondaryButtonText: {
-    color: "#a39b9b",
-    fontFamily: "MetalMania",
-    fontSize: 17,
     textAlign: "center",
   },
 });

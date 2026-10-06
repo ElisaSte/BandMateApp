@@ -3,12 +3,19 @@ import type { Musician } from "@/data/musician";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function ReviewProfile() {
   const { profile } = useProfile();
 
-  const createProfile = async () => {
+  const handleCreateProfile = async () => {
     const musician: Musician = {
       id: Date.now(),
       name: profile.name,
@@ -32,7 +39,11 @@ export default function ReviewProfile() {
     router.replace("/(tabs)/find-musicians");
   };
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.title}>Review your profile</Text>
 
       <View style={styles.profileImageContainer}>
@@ -63,10 +74,10 @@ export default function ReviewProfile() {
 
       <Text style={styles.bio}>{profile.bio}</Text>
 
-      <Pressable style={styles.button} onPress={createProfile}>
+      <Pressable style={styles.button} onPress={handleCreateProfile}>
         <Text style={styles.buttonText}>Create profile</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -74,9 +85,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#362323",
-    padding: 20,
   },
 
+  content: {
+    paddingTop: 20,
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingBottom: 50,
+  },
   title: {
     fontSize: 30,
     color: "#a39b9b",
@@ -96,11 +112,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   profileImage: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    alignSelf: "center",
-    marginBottom: 20,
+    width: "100%",
+    height: "100%",
   },
 
   name: {

@@ -33,12 +33,25 @@ const getCityFromAddress = (address: Location.LocationGeocodedAddress) => {
 };
 export default function CreateProfile() {
   const { profile, setProfile } = useProfile();
-  const [cityError, setCityError] = useState("");
+  const [error, setError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [usedLocation, setUsedLocation] = useState(false);
 
   const handleContinue = async () => {
+    const name = profile.name.trim();
+    if (!name) {
+      setError("Please enter your name");
+      return;
+    }
+    if (profile.age === 0) {
+      setError("Please enter your age");
+      return;
+    }
     const city = profile.city.trim();
+    if (!city) {
+      setError("Please enter your city");
+      return;
+    }
     if (usedLocation) {
       router.push("/create-profile/music");
       return;
@@ -48,7 +61,7 @@ export default function CreateProfile() {
       const results = await Location.geocodeAsync(city);
 
       if (results.length === 0) {
-        setCityError("City not found");
+        setError("City not found");
         return;
       }
 
@@ -61,20 +74,20 @@ export default function CreateProfile() {
         longitude,
       }));
 
-      setCityError("");
+      setError("");
 
       router.push("/create-profile/music");
     } catch {
-      setCityError("Could not verify city");
+      setError("Could not verify city");
     }
   };
   const useCurrentLocation = async () => {
     setLoadingLocation(true);
-    setCityError("");
+    setError("");
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== "granted") {
-      setCityError("Location permission is required");
+      setError("Location permission is required");
       setLoadingLocation(false);
       return;
     }
@@ -86,18 +99,19 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      console.log("Location:", location.coords);
-      console.log("Geocode result:", results);
+      //Leaving it here for future me
+      //console.log("Location:", location.coords);
+      //console.log("Geocode result:", results);
 
       if (results.length === 0) {
-        setCityError("Could not determine your city");
+        setError("Could not determine your city");
         setLoadingLocation(false);
         return;
       }
 
       const city = getCityFromAddress(results[0]);
       if (!city) {
-        setCityError("Could not determine your city");
+        setError("Could not determine your city");
         setLoadingLocation(false);
         return;
       }
@@ -110,9 +124,9 @@ export default function CreateProfile() {
       }));
       setUsedLocation(true);
       setLoadingLocation(false);
-      setCityError("");
+      setError("");
     } catch {
-      setCityError("Could not get your location");
+      setError("Could not get your location");
       setLoadingLocation(false);
     }
   };
@@ -127,84 +141,82 @@ export default function CreateProfile() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.container}>
-            <Text style={styles.title}>Create your profile</Text>
-            <Text style={styles.title}>Step 1</Text>
+          <Text style={styles.title}>Create your profile</Text>
+          <Text style={styles.title}>Step 1</Text>
 
-            <Text style={styles.label}>Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your name"
-              placeholderTextColor="#6f6868"
-              value={profile.name}
-              onChangeText={(text) =>
-                setProfile((current) => ({
-                  ...current,
-                  name: text,
-                }))
-              }
-            />
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your name"
+            placeholderTextColor="#6f6868"
+            value={profile.name}
+            onChangeText={(text) =>
+              setProfile((current) => ({
+                ...current,
+                name: text,
+              }))
+            }
+          />
 
-            <Text style={styles.label}>Age</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your age"
-              placeholderTextColor="#6f6868"
-              keyboardType="numeric"
-              value={profile.age === 0 ? "" : profile.age.toString()}
-              onChangeText={(text) => {
-                const numericText = text.replace(/[^0-9]/g, "");
+          <Text style={styles.label}>Age</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your age"
+            placeholderTextColor="#6f6868"
+            keyboardType="numeric"
+            value={profile.age === 0 ? "" : profile.age.toString()}
+            onChangeText={(text) => {
+              const numericText = text.replace(/[^0-9]/g, "");
 
-                setProfile((current) => ({
-                  ...current,
-                  age: numericText === "" ? 0 : Number(numericText),
-                }));
-              }}
-            />
+              setProfile((current) => ({
+                ...current,
+                age: numericText === "" ? 0 : Number(numericText),
+              }));
+            }}
+          />
 
-            <Text style={styles.label}>City</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Where are you based?"
-              placeholderTextColor="#6f6868"
-              value={profile.city}
-              onChangeText={(text) => {
-                setUsedLocation(false);
+          <Text style={styles.label}>City</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Where are you based?"
+            placeholderTextColor="#6f6868"
+            value={profile.city}
+            onChangeText={(text) => {
+              setUsedLocation(false);
 
-                setProfile((current) => ({
-                  ...current,
-                  city: text,
-                  latitude: 0,
-                  longitude: 0,
-                }));
-              }}
-            />
-            {(profile.latitude !== 0 || profile.longitude !== 0) && (
-              <Text style={styles.detectedLocation}>
-                Location detected: {profile.city}
-              </Text>
+              setProfile((current) => ({
+                ...current,
+                city: text,
+                latitude: 0,
+                longitude: 0,
+              }));
+            }}
+          />
+          {(profile.latitude !== 0 || profile.longitude !== 0) && (
+            <Text style={styles.detectedLocation}>
+              Location detected: {profile.city}
+            </Text>
+          )}
+          {error && <Text style={styles.error}>{error}</Text>}
+          <Pressable
+            style={styles.locationButton}
+            onPress={useCurrentLocation}
+            disabled={loadingLocation}
+          >
+            {loadingLocation ? (
+              <View style={styles.loadingContent}>
+                <ActivityIndicator color="#a39b9b" />
+                <Text style={styles.locationButtonText}>
+                  Finding your location...
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.locationButtonText}>Use my location</Text>
             )}
-            {cityError && <Text style={styles.error}>{cityError}</Text>}
-            <Pressable
-              style={styles.locationButton}
-              onPress={useCurrentLocation}
-              disabled={loadingLocation}
-            >
-              {loadingLocation ? (
-                <View style={styles.loadingContent}>
-                  <ActivityIndicator color="#a39b9b" />
-                  <Text style={styles.locationButtonText}>
-                    Finding your location...
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.locationButtonText}>Use my location</Text>
-              )}
-            </Pressable>
-            <Pressable style={styles.button} onPress={handleContinue}>
-              <Text style={styles.buttonText}>Continue</Text>
-            </Pressable>
-          </View>
+          </Pressable>
+          <Pressable style={styles.button} onPress={handleContinue}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </Pressable>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -215,6 +227,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#362323",
+  },
+  content: {
+    flexGrow: 1,
     padding: 20,
   },
 
@@ -289,8 +304,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-  },
-  content: {
-    flexGrow: 1,
   },
 });

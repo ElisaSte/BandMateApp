@@ -1,7 +1,8 @@
 import { useProfile } from "@/context/profile-context";
-import { Genre } from "@/data/genre";
+import type { Genre } from "@/data/genre";
 import type { InstrumentType } from "@/data/instrument";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -15,16 +16,29 @@ import {
   View,
 } from "react-native";
 
+const instruments: InstrumentType[] = [
+  "Guitar",
+  "Bass",
+  "Drums",
+  "Vocals",
+  "Keyboard",
+];
+const genres: Genre[] = [
+  "Metal",
+  "Rock",
+  "Alternative",
+  "Punk",
+  "Pop",
+  "Jazz",
+  "Blues",
+  "Electronic",
+  "Indie",
+  "Classical",
+];
+
 export default function MusicProfile() {
   const { profile, setProfile } = useProfile();
-
-  const instruments: InstrumentType[] = [
-    "Guitar",
-    "Bass",
-    "Drums",
-    "Vocals",
-    "Keyboard",
-  ];
+  const [error, setError] = useState("");
 
   const toggleInstrument = (instrument: InstrumentType) => {
     if (profile.instruments.includes(instrument)) {
@@ -40,19 +54,6 @@ export default function MusicProfile() {
     }
   };
 
-  const genres: Genre[] = [
-    "Metal",
-    "Rock",
-    "Alternative",
-    "Punk",
-    "Pop",
-    "Jazz",
-    "Blues",
-    "Electronic",
-    "Indie",
-    "Classical",
-  ];
-
   const toggleGenre = (genre: Genre) => {
     if (profile.genres.includes(genre)) {
       setProfile((current) => ({
@@ -66,6 +67,20 @@ export default function MusicProfile() {
       }));
     }
   };
+  const handleContinue = () => {
+    if (profile.instruments.length === 0) {
+      setError("Please select at least one instrument");
+      return;
+    }
+
+    if (profile.genres.length === 0) {
+      setError("Please select at least one genre");
+      return;
+    }
+
+    setError("");
+    router.push("/create-profile/photo");
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -78,84 +93,78 @@ export default function MusicProfile() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.container}>
-            <Text style={styles.title}>Step 2</Text>
-            <Text style={styles.label}>Instruments</Text>
-            <View style={styles.inputContainer}>
-              {instruments.map((instrument) => (
-                <Pressable
-                  key={instrument}
-                  style={[
-                    styles.inputButton,
-                    profile.instruments.includes(instrument) && styles.selected,
-                  ]}
-                  onPress={() => toggleInstrument(instrument)}
-                >
-                  <Text style={styles.text}>{instrument}</Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Text style={styles.label}>Genres</Text>
-            <View style={styles.inputContainer}>
-              {genres.map((g) => (
-                <Pressable
-                  key={g}
-                  style={[
-                    styles.inputButton,
-                    profile.genres.includes(g) && styles.selected,
-                  ]}
-                  onPress={() => toggleGenre(g)}
-                >
-                  <Text style={styles.text}>{g}</Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Text style={styles.label}>Years of experience</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Years"
-              placeholderTextColor="#6f6868"
-              keyboardType="numeric"
-              value={
-                profile.yearsOfExperience === 0
-                  ? ""
-                  : profile.yearsOfExperience.toString()
-              }
-              onChangeText={(text) => {
-                const numericText = text.replace(/[^0-9]/g, "");
-
-                setProfile((current) => ({
-                  ...current,
-                  yearsOfExperience:
-                    numericText === "" ? 0 : Number(numericText),
-                }));
-              }}
-            />
-
-            <Text style={styles.label}>About you</Text>
-            <TextInput
-              style={[styles.input, styles.bioInput]}
-              placeholder="Tell other musicians about yourself..."
-              placeholderTextColor="#6f6868"
-              multiline
-              value={profile.bio}
-              onChangeText={(text) =>
-                setProfile((current) => ({
-                  ...current,
-                  bio: text,
-                }))
-              }
-            />
-
-            <Pressable
-              style={styles.button}
-              onPress={() => router.push("/create-profile/photo")}
-            >
-              <Text style={styles.buttonText}>Continue</Text>
-            </Pressable>
+          <Text style={styles.title}>Step 2</Text>
+          <Text style={styles.label}>Instruments</Text>
+          <View style={styles.inputContainer}>
+            {instruments.map((instrument) => (
+              <Pressable
+                key={instrument}
+                style={[
+                  styles.inputButton,
+                  profile.instruments.includes(instrument) && styles.selected,
+                ]}
+                onPress={() => toggleInstrument(instrument)}
+              >
+                <Text style={styles.text}>{instrument}</Text>
+              </Pressable>
+            ))}
           </View>
+
+          <Text style={styles.label}>Genres</Text>
+          <View style={styles.inputContainer}>
+            {genres.map((g) => (
+              <Pressable
+                key={g}
+                style={[
+                  styles.inputButton,
+                  profile.genres.includes(g) && styles.selected,
+                ]}
+                onPress={() => toggleGenre(g)}
+              >
+                <Text style={styles.text}>{g}</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          <Text style={styles.label}>Years of experience</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Years"
+            placeholderTextColor="#6f6868"
+            keyboardType="numeric"
+            value={
+              profile.yearsOfExperience === 0
+                ? ""
+                : profile.yearsOfExperience.toString()
+            }
+            onChangeText={(text) => {
+              const numericText = text.replace(/[^0-9]/g, "");
+
+              setProfile((current) => ({
+                ...current,
+                yearsOfExperience: numericText === "" ? 0 : Number(numericText),
+              }));
+            }}
+          />
+
+          <Text style={styles.label}>About you</Text>
+          <TextInput
+            style={[styles.input, styles.bioInput]}
+            placeholder="Tell other musicians about yourself..."
+            placeholderTextColor="#6f6868"
+            multiline
+            value={profile.bio}
+            onChangeText={(text) =>
+              setProfile((current) => ({
+                ...current,
+                bio: text,
+              }))
+            }
+          />
+          {error && <Text style={styles.error}>{error}</Text>}
+          <Pressable style={styles.button} onPress={handleContinue}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -166,6 +175,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#362323",
+  },
+
+  content: {
+    flexGrow: 1,
     padding: 20,
   },
 
@@ -235,8 +248,10 @@ const styles = StyleSheet.create({
     color: "#362323",
     fontSize: 16,
   },
-  content: {
-    flexGrow: 1,
-    padding: 20,
+  error: {
+    color: "#a39b9b",
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
