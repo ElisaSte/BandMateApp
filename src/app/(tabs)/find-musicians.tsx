@@ -1,12 +1,13 @@
+import MusicianCard from "@/components/musician-card";
 import RecentMusicianCard from "@/components/recent-musician-card";
-import { InstrumentType } from "@/data/instrument";
-import { Musician } from "@/data/musician";
-import { calculateDistance } from "@/utils/distance";
+import type { InstrumentType } from "@/data/instrument";
+import type { Musician } from "@/data/musician";
+import { musicians } from "@/data/musicians";
+import { filterMusicians } from "@/utils/filter-musicians";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,8 +15,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import MusicianCard from "../../components/musician-card";
-import { musicians } from "../../data/musicians";
 
 export default function FindMusicians() {
   const [search, setSearch] = useState("");
@@ -23,7 +22,7 @@ export default function FindMusicians() {
   const [nearMe, setNearMe] = useState(false);
   const [radius, setRadius] = useState<number | null>(10);
   const [currentMusician, setCurrentMusician] = useState<Musician | null>(null);
-  const [loadingNearby, setLoadingNearby] = useState(false);
+
   useEffect(() => {
     const loadProfile = async () => {
       const savedProfile = await AsyncStorage.getItem("currentMusician");
@@ -37,76 +36,26 @@ export default function FindMusicians() {
     loadProfile();
   }, []);
 
-  const handleNearMe = async () => {
+  const handleNearMe = () => {
     if (nearMe) {
       setNearMe(false);
       return;
     }
 
-    setLoadingNearby(true);
-
-    try {
-      let musician = currentMusician;
-
-      if (!musician) {
-        const savedProfile = await AsyncStorage.getItem("currentMusician");
-
-        if (savedProfile) {
-          musician = JSON.parse(savedProfile);
-          setCurrentMusician(musician);
-        }
-      }
-
-      if (!musician) {
-        return;
-      }
-
-      setNearMe(true);
-    } finally {
-      setLoadingNearby(false);
+    if (!currentMusician) {
+      return;
     }
+
+    setNearMe(true);
   };
-  const filteredMusicians: Musician[] = musicians.filter((m) => {
-    if (!m.name.toLowerCase().includes(search.toLowerCase())) {
-      //excludes musicians who´s name doesn´t include the search
-      return false;
-    }
-
-    if (
-      instrument !== "All" &&
-      !m.instruments.some((i) => i.name === instrument)
-    ) {
-      //excludes musician that doesn't have the selected instrument in the instrument list
-      return false;
-    }
-    if (nearMe && currentMusician && radius !== null) {
-      const distance = calculateDistance(
-        currentMusician.latitude,
-        currentMusician.longitude,
-        m.latitude,
-        m.longitude,
-      );
-      console.log(
-        m.name,
-        "my coords:",
-        currentMusician.latitude,
-        currentMusician.longitude,
-        "musician coords:",
-        m.latitude,
-        m.longitude,
-        "distance:",
-        distance,
-        "radius:",
-        radius,
-      );
-
-      if (distance > radius) {
-        return false;
-      }
-    }
-
-    return true;
-  });
+  const filteredMusicians = filterMusicians(
+    musicians,
+    search,
+    instrument,
+    nearMe,
+    currentMusician,
+    radius,
+  );
   const latestMusicians = [...musicians]
     .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
     .slice(0, 8);
@@ -146,18 +95,10 @@ export default function FindMusicians() {
             <Picker.Item label="Keyboard" value="Keyboard" />
           </Picker>
         </View>
-        <Pressable
-          onPress={handleNearMe}
-          style={styles.locationButton}
-          disabled={loadingNearby}
-        >
-          {loadingNearby ? (
-            <ActivityIndicator color="#362323" />
-          ) : (
-            <Text style={styles.locationButtonText}>
-              {nearMe ? "Show all" : "Near me"}
-            </Text>
-          )}
+        <Pressable onPress={handleNearMe} style={styles.locationButton}>
+          <Text style={styles.locationButtonText}>
+            {nearMe ? "Show all" : "Near me"}
+          </Text>
         </Pressable>
         {nearMe && currentMusician && (
           <View style={styles.pickerContainer}>
@@ -187,11 +128,9 @@ export default function FindMusicians() {
           <Text style={styles.noResults}>Oops! No musicians found.</Text>
         )}
 
-        {filteredMusicians
-          .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
-          .map((musician) => (
-            <MusicianCard key={musician.id} musician={musician} />
-          ))}
+        {filteredMusicians.map((musician) => (
+          <MusicianCard key={musician.id} musician={musician} />
+        ))}
       </ScrollView>
     </View>
   );
@@ -215,22 +154,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 40,
     fontFamily: "MetalMania",
-  },
-  button: {
-    backgroundColor: "#a39b9b",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 8,
-    marginTop: 60,
-  },
-  buttonText: {
-    color: "#362323",
-    fontSize: 18,
-    fontFamily: "MetalMania",
-  },
-  list: {
-    width: "100%",
-    flex: 1,
   },
   searchInput: {
     backgroundColor: "#a39b9b",
