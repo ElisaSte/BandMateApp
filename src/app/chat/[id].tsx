@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Chat() {
   const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
+
   const musician = musicians.find((musician) => musician.id === Number(id));
 
   const conversation = conversations.find(
@@ -38,6 +39,15 @@ export default function Chat() {
     );
   }
 
+  const openMusicianProfile = () => {
+    router.push({
+      pathname: "/musicians/[id]",
+      params: {
+        id: musician.id.toString(),
+      },
+    });
+  };
+
   const sendMessage = async () => {
     if (!message.trim()) {
       return;
@@ -55,20 +65,9 @@ export default function Chat() {
 
     await Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Confirm);
   };
-
   return (
     <View style={styles.container}>
-      <Pressable
-        style={styles.chatHeader}
-        onPress={() => {
-          router.push({
-            pathname: "/musicians/[id]",
-            params: {
-              id: musician.id.toString(),
-            },
-          });
-        }}
-      >
+      <Pressable style={styles.chatHeader} onPress={openMusicianProfile}>
         {musician.profilePic ? (
           <Image
             source={
@@ -107,16 +106,7 @@ export default function Chat() {
               ]}
             >
               {!isMine && (
-                <Pressable
-                  onPress={() => {
-                    router.push({
-                      pathname: "/musicians/[id]",
-                      params: {
-                        id: musician.id.toString(),
-                      },
-                    });
-                  }}
-                >
+                <Pressable onPress={openMusicianProfile}>
                   <Image
                     source={
                       typeof musician.profilePic === "string"
@@ -179,14 +169,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#362323",
     padding: 20,
-  },
-
-  title: {
-    color: "#a39b9b",
-    fontFamily: "MetalMania",
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 15,
   },
 
   messages: {
