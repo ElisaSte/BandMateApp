@@ -10,36 +10,6 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Profile() {
   const { ads } = useAds();
-
-  const [currentMusicianId, setCurrentMusicianId] = useState<number | null>(
-    null,
-  );
-
-  useEffect(() => {
-    const loadMusician = async () => {
-      const savedMusician = await AsyncStorage.getItem("currentMusician");
-
-      if (savedMusician) {
-        const musician = JSON.parse(savedMusician);
-        setCurrentMusicianId(musician.id);
-      }
-    };
-
-    loadMusician();
-  }, []);
-
-  const myAds = ads
-    .filter((ad) => ad.musician.id === currentMusicianId)
-    .sort((a, b) => b.date.localeCompare(a.date));
-
-  const activeAds = myAds.filter((ad) => ad.isActive);
-  const closedAds = myAds.filter((ad) => !ad.isActive);
-  const resetOnboarding = async () => {
-    await AsyncStorage.removeItem("onboardingCompleted");
-    await AsyncStorage.removeItem("currentMusician");
-    router.replace("/onboarding");
-  };
-
   const [musician, setMusician] = useState<Musician | null>(null);
 
   useEffect(() => {
@@ -54,6 +24,19 @@ export default function Profile() {
 
     loadProfile();
   }, []);
+
+  const myAds = ads
+    .filter((ad) => ad.musician.id === musician?.id)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const activeAds = myAds.filter((ad) => ad.isActive);
+  const closedAds = myAds.filter((ad) => !ad.isActive);
+
+  const resetOnboarding = async () => {
+    await AsyncStorage.removeItem("onboardingCompleted");
+    await AsyncStorage.removeItem("currentMusician");
+    router.replace("/onboarding");
+  };
 
   return (
     <ScrollView
@@ -108,15 +91,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
-
-  title: {
-    color: "#a39b9b",
-    fontFamily: "MetalMania",
-    fontSize: 40,
-    textAlign: "left",
-    marginBottom: 25,
-  },
-
   resetButton: {
     marginTop: 20,
     alignSelf: "center",
@@ -128,20 +102,7 @@ const styles = StyleSheet.create({
     color: "#6f6868",
     fontSize: 13,
   },
-  messageButton: {
-    backgroundColor: "#a39b9b",
-    width: "100%",
-    paddingVertical: 14,
-    borderRadius: 10,
-    marginTop: 20,
-  },
 
-  messageButtonText: {
-    color: "#362323",
-    fontFamily: "MetalMania",
-    fontSize: 20,
-    textAlign: "center",
-  },
   adsHeader: {
     flexDirection: "row",
     alignItems: "center",
