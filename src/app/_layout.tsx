@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { Image } from "react-native";
 
 export default function RootLayout() {
   const [loading, setLoading] = useState(true);
@@ -62,6 +63,30 @@ export default function RootLayout() {
             name="ads"
             options={{
               headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="create-ad"
+            options={{
+              headerShown: true,
+              headerTitleAlign: "center",
+
+              headerStyle: {
+                backgroundColor: "#362323",
+              },
+
+              headerTintColor: "#a39b9b",
+
+              headerTitle: () => (
+                <Image
+                  source={require("@/assets/bm/BandMatelogo.png")}
+                  style={{
+                    width: 120,
+                    height: 55,
+                  }}
+                  resizeMode="contain"
+                />
+              ),
             }}
           />
         </Stack>
