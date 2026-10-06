@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 import {
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -59,79 +60,90 @@ export default function FindMusicians() {
   const latestMusicians = [...musicians]
     .sort((a, b) => b.registrationDate.localeCompare(a.registrationDate))
     .slice(0, 8);
-
   return (
     <View style={styles.root}>
-      <ScrollView>
-        <Text style={styles.title}>Our musicians</Text>
-        <Text style={styles.text}>Latest musicians</Text>
+      <FlatList
+        data={filteredMusicians}
+        keyExtractor={(musician) => musician.id.toString()}
+        renderItem={({ item }) => <MusicianCard musician={item} />}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <Text style={styles.title}>Our musicians</Text>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.latestContainer}
-        >
-          {latestMusicians.map((musician) => (
-            <RecentMusicianCard key={musician.id} musician={musician} />
-          ))}
-        </ScrollView>
-        <Text style={styles.text}>Filter</Text>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search by name"
-          value={search}
-          onChangeText={setSearch}
-        />
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={instrument}
-            onValueChange={(value) => setInstrument(value)}
-          >
-            <Picker.Item label="All instruments" value="All" />
-            <Picker.Item label="Guitar" value="Guitar" />
-            <Picker.Item label="Bass" value="Bass" />
-            <Picker.Item label="Drums" value="Drums" />
-            <Picker.Item label="Vocals" value="Vocals" />
-            <Picker.Item label="Keyboard" value="Keyboard" />
-          </Picker>
-        </View>
-        <Pressable onPress={handleNearMe} style={styles.locationButton}>
-          <Text style={styles.locationButtonText}>
-            {nearMe ? "Show all" : "Near me"}
-          </Text>
-        </Pressable>
-        {nearMe && currentMusician && (
-          <View style={styles.pickerContainer}>
-            <Text style={styles.radiusText}>Search radius</Text>
-            <Picker
-              selectedValue={radius}
-              onValueChange={(value) => setRadius(value)}
+            <Text style={styles.text}>Latest musicians</Text>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.latestContainer}
             >
-              <Picker.Item label="5 km" value={5} />
-              <Picker.Item label="10 km" value={10} />
-              <Picker.Item label="15 km" value={15} />
-              <Picker.Item label="20 km" value={20} />
-              <Picker.Item label="25 km" value={25} />
-              <Picker.Item label="30 km" value={30} />
-              <Picker.Item label="35 km" value={35} />
-              <Picker.Item label="40 km" value={40} />
-              <Picker.Item label="45 km" value={45} />
-              <Picker.Item label="50 km" value={50} />
-              <Picker.Item label="100 km" value={100} />
-              <Picker.Item label="remove filter" value={null} />
-            </Picker>
-          </View>
-        )}
+              {latestMusicians.map((musician) => (
+                <RecentMusicianCard key={musician.id} musician={musician} />
+              ))}
+            </ScrollView>
 
-        <Text style={styles.text}>Our musicians</Text>
-        {filteredMusicians.length === 0 && (
+            <Text style={styles.text}>Filter</Text>
+
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by name"
+              value={search}
+              onChangeText={setSearch}
+            />
+
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={instrument}
+                onValueChange={(value) => setInstrument(value)}
+              >
+                <Picker.Item label="All instruments" value="All" />
+                <Picker.Item label="Guitar" value="Guitar" />
+                <Picker.Item label="Bass" value="Bass" />
+                <Picker.Item label="Drums" value="Drums" />
+                <Picker.Item label="Vocals" value="Vocals" />
+                <Picker.Item label="Keyboard" value="Keyboard" />
+              </Picker>
+            </View>
+
+            <Pressable onPress={handleNearMe} style={styles.locationButton}>
+              <Text style={styles.locationButtonText}>
+                {nearMe ? "Show all" : "Near me"}
+              </Text>
+            </Pressable>
+
+            {nearMe && currentMusician && (
+              <View style={styles.pickerContainer}>
+                <Text style={styles.radiusText}>Search radius</Text>
+
+                <Picker
+                  selectedValue={radius}
+                  onValueChange={(value) => setRadius(value)}
+                >
+                  <Picker.Item label="5 km" value={5} />
+                  <Picker.Item label="10 km" value={10} />
+                  <Picker.Item label="15 km" value={15} />
+                  <Picker.Item label="20 km" value={20} />
+                  <Picker.Item label="25 km" value={25} />
+                  <Picker.Item label="30 km" value={30} />
+                  <Picker.Item label="35 km" value={35} />
+                  <Picker.Item label="40 km" value={40} />
+                  <Picker.Item label="45 km" value={45} />
+                  <Picker.Item label="50 km" value={50} />
+                  <Picker.Item label="100 km" value={100} />
+                  <Picker.Item label="remove filter" value={null} />
+                </Picker>
+              </View>
+            )}
+
+            <Text style={styles.text}>Our musicians</Text>
+          </>
+        }
+        ListEmptyComponent={
           <Text style={styles.noResults}>Oops! No musicians found.</Text>
-        )}
-
-        {filteredMusicians.map((musician) => (
-          <MusicianCard key={musician.id} musician={musician} />
-        ))}
-      </ScrollView>
+        }
+        contentContainerStyle={styles.listContent}
+      />
     </View>
   );
 }
@@ -140,6 +152,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     backgroundColor: "#362323",
+  },
+  listContent: {
+    paddingBottom: 30,
   },
   title: {
     fontSize: 40,

@@ -99,9 +99,6 @@ export default function CreateProfile() {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      //Leaving it here for future me
-      //console.log("Location:", location.coords);
-      //console.log("Geocode result:", results);
 
       if (results.length === 0) {
         setError("Could not determine your city");
